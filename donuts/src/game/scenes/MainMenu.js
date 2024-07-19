@@ -8,7 +8,7 @@ export class MainMenu extends Scene {
 
     create() {
         this.showInitialImages(() => {
-            this.add.image(512, 384, 'background');
+            // this.add.image(512, 384, 'background');
             this.logo = this.add.image(512, 300, 'logo').setDepth(100);
 
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
@@ -31,7 +31,7 @@ export class MainMenu extends Scene {
     }
 
     showInitialImages(callback) {
-        this.add.image(512, 384, 'background');
+        // this.add.image(512, 384, 'background');
 
         const firstImage = this.add.image(512, 384, 'first-donut').setDepth(200);
         this.time.delayedCall(300, () => {
