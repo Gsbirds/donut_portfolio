@@ -31,12 +31,12 @@ export class MainMenu extends Scene {
     }
 
     showInitialImages(callback) {
-        // this.add.image(512, 384, 'background');
+        this.add.image(512, 384, 'background');
 
-        const firstImage = this.add.image(512, 384, 'first-donut').setDepth(200);
+        const firstImage = this.add.image(612, 495, 'first-donut').setDepth(200);
         this.time.delayedCall(300, () => {
             firstImage.destroy();
-            const secondImage = this.add.image(512, 384, 'second-donut').setDepth(200);
+            const secondImage = this.add.image(612, 495, 'second-donut').setDepth(200);
             this.time.delayedCall(300, () => {
                 secondImage.destroy();
                 callback();
@@ -102,7 +102,7 @@ export class MainMenu extends Scene {
                 this.logo.destroy();
             }
 
-            this.logo = this.add.image(512, 300, imageName).setDepth(200);
+            this.logo = this.add.image(612, 495,imageName).setDepth(200);
             
             this.addSprite(spriteName);
 
