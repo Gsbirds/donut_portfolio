@@ -8,8 +8,8 @@ export class MainMenu extends Scene {
 
     create() {
         this.showInitialImages(() => {
-            // this.add.image(512, 384, 'background');
-            this.logo = this.add.image(512, 300, 'logo').setDepth(100);
+            this.add.image(512, 384, 'background');
+            this.logo = this.add.image(612, 495, 'logo').setDepth(100);
 
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75, 'Projects', 'second-donut');
