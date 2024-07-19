@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { PhaserGame } from './game/PhaserGame';
 import { EventBus } from './game/EventBus';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Projects from './projects'; // Ensure this path is correct
+import Projects from './projects';
 
 
 function App() {
@@ -39,12 +39,7 @@ function App() {
 
     return (
         <div>
-        <Router>
-                <Routes>
-                    <Route path="/projects" element={<Projects />} />
-                </Routes>
-            </Router>
-        <div id="app">
+             <div id="app">
             
             <PhaserGame ref={phaserRef} />
             {sceneReady && (
@@ -53,6 +48,13 @@ function App() {
                 </div>
             )}
         </div>
+        
+        <Router>
+                <Routes>
+                    <Route path="/projects" element={<Projects />} />
+                </Routes>
+            </Router>
+       
         </div>
     );
 }

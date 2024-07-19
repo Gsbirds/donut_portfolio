@@ -13,8 +13,8 @@ body {
     font-family: var(--sans);
     font-size: 1rem;
     padding-top: 3rem;
-  } */
-   
+  } 
+    */
 
 #app {
     width: 100%;
@@ -74,11 +74,8 @@ les declared here - these are the colors for our pages, as well as the font stac
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-  }
-  
-  .parallax{
-    /* background-image: url("./static/bit-cloud-3lqk4BQkCDw-unsplash.jpg"); */
-    opacity: 0.9;
+    background-image: url("donuts/public/assets/donutwallpaper.png");
+
   }
   
   
@@ -631,9 +628,9 @@ les declared here - these are the colors for our pages, as well as the font stac
       padding-left:1rem;;
     }
     #intro{
-      width:400px;
-    }
-    
+        width:400px;
+      }
+      
     #contact {
       width: 300px;
     }
@@ -654,20 +651,7 @@ les declared here - these are the colors for our pages, as well as the font stac
         visibility:hidden;
       }
     }
-  
-    .parallax{
-      opacity: 0.9;
-      min-height: 500px;
-      background-attachment: fixed;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-    
-    .parallax{
-      background-image: url("./static/bit-cloud-3lqk4BQkCDw-unsplash.jpg");
-      opacity: 0.9;
-    }
+
   
     .d-block{
       width:400px;

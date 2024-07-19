@@ -7,7 +7,7 @@ function Projects() {
 
 
     return (
-        <div id="app">
+        <div class="parallax">
             <section class="section-blue">
     <section id="projects">
       <article>
