@@ -12,7 +12,7 @@ const config = {
     width: 1324,
     height: 1020,
     parent: 'game-container',
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+    transparent: true,
 
     scene: [
         Boot,

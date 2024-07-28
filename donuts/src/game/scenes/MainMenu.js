@@ -8,7 +8,8 @@ export class MainMenu extends Scene {
 
     create() {
         this.showInitialImages(() => {
-            this.add.image(512, 384, 'background');
+            const background = this.add.image(512, 384, 'background');
+            background.setAlpha(0);
             this.logo = this.add.image(612, 495, 'logo').setDepth(100);
 
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
@@ -31,8 +32,8 @@ export class MainMenu extends Scene {
     }
 
     showInitialImages(callback) {
-        this.add.image(512, 384, 'background');
-    
+        const background = this.add.image(512, 384, 'background');
+        background.setAlpha(0);
         const showImage = (x, y, key, delay, next) => {
             const image = this.add.image(x, y, key).setDepth(200);
             this.time.delayedCall(delay, () => {
@@ -45,41 +46,41 @@ export class MainMenu extends Scene {
             });
         };
     
-        showImage(612, 495, 'closed', 300, () => {
-            showImage(612, 495, 'mostlyclosed', 300, () => {
-                showImage(612, 495, 'halfway', 300, () => {
-                    showImage(612, 495, 'mostlyopen', 300, callback);
+        showImage(612, 495, 'closed', 100, () => {
+            showImage(612, 495, 'mostlyclosed', 100, () => {
+                showImage(612, 495, 'halfway', 100, () => {
+                    showImage(612, 495, 'mostlyopen', 100, callback);
                 });
             });
         });
     }
 
     reverseImages(callback) {
-        const showImage = (x, y, key, delay, next) => {
-            const image = this.add.image(x, y, key).setDepth(200);
-            this.tweens.add({
-                targets: image,
-                scaleX: 0.5,
-                scaleY: 0.5,
-                duration: delay,
-                onComplete: () => {
-                    image.destroy();
-                    if (next) {
-                        next();
-                    } else {
-                        callback();
-                    }
+        const sizes = [1, 0.8, 0.6, 0.4];
+        const keys = ['mostlyopen', 'halfway', 'mostlyclosed', 'closed'];
+        const delays = [100, 100, 100, 100];
+
+        const showImage = (x, y, key, size, delay, next) => {
+            const image = this.add.image(x, y, key).setDepth(200).setScale(size);
+            this.time.delayedCall(delay, () => {
+                image.destroy();
+                if (next) {
+                    next();
+                } else {
+                    callback();
                 }
             });
         };
 
-        showImage(612, 495, 'mostlyopen', 300, () => {
-            showImage(612, 495, 'halfway', 300, () => {
-                showImage(612, 495, 'mostlyclosed', 300, () => {
-                    showImage(612, 495, 'closed', 300, callback);
-                });
-            });
-        });
+        const chainImages = (index) => {
+            if (index < keys.length) {
+                showImage(612, 495, keys[index], sizes[index], delays[index], () => chainImages(index + 1));
+            } else {
+                callback();
+            }
+        };
+
+        chainImages(0);
     }
 
     addSprite(spriteName) {
