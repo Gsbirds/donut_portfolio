@@ -32,14 +32,52 @@ export class MainMenu extends Scene {
 
     showInitialImages(callback) {
         this.add.image(512, 384, 'background');
+    
+        const showImage = (x, y, key, delay, next) => {
+            const image = this.add.image(x, y, key).setDepth(200);
+            this.time.delayedCall(delay, () => {
+                image.destroy();
+                if (next) {
+                    next();
+                } else {
+                    callback();
+                }
+            });
+        };
+    
+        showImage(612, 495, 'closed', 300, () => {
+            showImage(612, 495, 'mostlyclosed', 300, () => {
+                showImage(612, 495, 'halfway', 300, () => {
+                    showImage(612, 495, 'mostlyopen', 300, callback);
+                });
+            });
+        });
+    }
 
-        const firstImage = this.add.image(612, 495, 'first-donut').setDepth(200);
-        this.time.delayedCall(300, () => {
-            firstImage.destroy();
-            const secondImage = this.add.image(612, 495, 'second-donut').setDepth(200);
-            this.time.delayedCall(300, () => {
-                secondImage.destroy();
-                callback();
+    reverseImages(callback) {
+        const showImage = (x, y, key, delay, next) => {
+            const image = this.add.image(x, y, key).setDepth(200);
+            this.tweens.add({
+                targets: image,
+                scaleX: 0.5,
+                scaleY: 0.5,
+                duration: delay,
+                onComplete: () => {
+                    image.destroy();
+                    if (next) {
+                        next();
+                    } else {
+                        callback();
+                    }
+                }
+            });
+        };
+
+        showImage(612, 495, 'mostlyopen', 300, () => {
+            showImage(612, 495, 'halfway', 300, () => {
+                showImage(612, 495, 'mostlyclosed', 300, () => {
+                    showImage(612, 495, 'closed', 300, callback);
+                });
             });
         });
     }
@@ -102,12 +140,12 @@ export class MainMenu extends Scene {
                 this.logo.destroy();
             }
 
-            this.logo = this.add.image(612, 495,imageName).setDepth(200);
+            this.logo = this.add.image(612, 495, imageName).setDepth(200);
             
             this.addSprite(spriteName);
 
-            const url = `${window.location.origin}/${name.toLowerCase()}`;
-            this.time.delayedCall(5000, () => {
+            this.reverseImages(() => {
+                const url = `${window.location.origin}/${name.toLowerCase()}`;
                 window.location.href = url;
             });
         });
@@ -144,8 +182,8 @@ export class MainMenu extends Scene {
             
             this.addSprite(spriteName);
 
-            const url = `${window.location.origin}/${label.toLowerCase()}`;
-            this.time.delayedCall(5000, () => {
+            this.reverseImages(() => {
+                const url = `${window.location.origin}/${label.toLowerCase()}`;
                 window.location.href = url;
             });
         });
