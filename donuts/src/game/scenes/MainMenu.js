@@ -10,7 +10,7 @@ export class MainMenu extends Scene {
         this.showInitialImages(() => {
             const background = this.add.image(512, 384, 'background');
             background.setAlpha(0);
-            this.logo = this.add.image(612, 495, 'logo').setDepth(100);
+            this.logo = this.add.image(612, 495, 'logo').setDepth(100).setScale(0.75);
 
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75, 'Projects', 'second-donut');
