@@ -34,8 +34,8 @@ export class MainMenu extends Scene {
     showInitialImages(callback) {
         const background = this.add.image(512, 384, 'background');
         background.setAlpha(0);
-        const showImage = (x, y, key, delay, next) => {
-            const image = this.add.image(x, y, key).setDepth(200);
+        const showImage = (x, y, key, scale, delay, next) => {
+            const image = this.add.image(x, y, key).setDepth(200).setScale(scale);
             this.time.delayedCall(delay, () => {
                 image.destroy();
                 if (next) {
@@ -46,17 +46,17 @@ export class MainMenu extends Scene {
             });
         };
     
-        showImage(612, 495, 'closed', 100, () => {
-            showImage(612, 495, 'mostlyclosed', 100, () => {
-                showImage(612, 495, 'halfway', 100, () => {
-                    showImage(612, 495, 'mostlyopen', 100, callback);
+        showImage(612, 495, 'closed', 0.75, 100, () => {
+            showImage(612, 495, 'mostlyclosed', 0.75, 100, () => {
+                showImage(612, 495, 'halfway', 0.75, 100, () => {
+                    showImage(612, 495, 'mostlyopen', 0.75, 100, callback);
                 });
             });
         });
     }
 
     reverseImages(callback) {
-        const sizes = [1, 0.8, 0.6, 0.4];
+        const sizes = [.75, 0.6, 0.5, 0.3];
         const keys = ['mostlyopen', 'halfway', 'mostlyclosed', 'closed'];
         const delays = [100, 100, 100, 100];
 
@@ -141,7 +141,7 @@ export class MainMenu extends Scene {
                 this.logo.destroy();
             }
 
-            this.logo = this.add.image(612, 495, imageName).setDepth(200);
+            this.logo = this.add.image(612, 495, imageName).setScale(.75);
             
             this.addSprite(spriteName);
 
@@ -179,7 +179,7 @@ export class MainMenu extends Scene {
                 this.logo.destroy();
             }
 
-            this.logo = this.add.image(512, 300, imageName).setDepth(200);
+            this.logo = this.add.image(512, 300, imageName).setDepth(200).setScale(0.75);
             
             this.addSprite(spriteName);
 
