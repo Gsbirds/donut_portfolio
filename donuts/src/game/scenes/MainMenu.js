@@ -23,8 +23,8 @@ export class MainMenu extends Scene {
             this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut');
             this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut');
             this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut');
-            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Art', 'fifth-donut'); 
-            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut'); 
+            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Art', 'fifth-donut');
+            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut');
 
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
@@ -45,7 +45,7 @@ export class MainMenu extends Scene {
                 }
             });
         };
-    
+
         showImage(612, 495, 'closed', 0.75, 100, () => {
             showImage(612, 495, 'mostlyclosed', 0.75, 100, () => {
                 showImage(612, 495, 'halfway', 0.75, 100, () => {
@@ -56,31 +56,25 @@ export class MainMenu extends Scene {
     }
 
     reverseImages(callback) {
-        const sizes = [.75, 0.6, 0.5, 0.3];
+        const sizes = [0.75, 0.6, 0.5, 0.3];
         const keys = ['mostlyopen', 'halfway', 'mostlyclosed', 'closed'];
         const delays = [100, 100, 100, 100];
+        let imageIndex = 0;
 
-        const showImage = (x, y, key, size, delay, next) => {
-            const image = this.add.image(x, y, key).setDepth(200).setScale(size);
-            this.time.delayedCall(delay, () => {
-                image.destroy();
-                if (next) {
-                    next();
-                } else {
-                    callback();
-                }
-            });
-        };
-
-        const chainImages = (index) => {
-            if (index < keys.length) {
-                showImage(612, 495, keys[index], sizes[index], delays[index], () => chainImages(index + 1));
+        const reverseImage = () => {
+            if (imageIndex < keys.length) {
+                this.logo.setTexture(keys[imageIndex]);
+                this.logo.setScale(sizes[imageIndex]);
+                this.time.delayedCall(delays[imageIndex], () => {
+                    imageIndex++;
+                    reverseImage();
+                });
             } else {
                 callback();
             }
         };
 
-        chainImages(0);
+        reverseImage();
     }
 
     addSprite(spriteName) {
@@ -141,14 +135,25 @@ export class MainMenu extends Scene {
                 this.logo.destroy();
             }
 
-            this.logo = this.add.image(612, 495, imageName).setScale(.75);
-            
+            this.logo = this.add.image(612, 495, imageName).setScale(0.75);
+
             this.addSprite(spriteName);
 
             this.reverseImages(() => {
-                const url = `${window.location.origin}/${name.toLowerCase()}`;
-                window.location.href = url;
+                this.tweens.add({
+                    targets: this.logo,
+                    x: 50,
+                    y: 50,
+                    duration: 1000,
+                    ease: 'Power2',
+                    onComplete: () => {
+                        const url = `${window.location.origin}/${name.toLowerCase()}`;
+                        window.location.href = url;
+                    }
+                });
             });
+
+            EventBus.emit('donut-clicked');
         });
     }
 
@@ -180,13 +185,24 @@ export class MainMenu extends Scene {
             }
 
             this.logo = this.add.image(512, 300, imageName).setDepth(200).setScale(0.75);
-            
+
             this.addSprite(spriteName);
 
             this.reverseImages(() => {
-                const url = `${window.location.origin}/${label.toLowerCase()}`;
-                window.location.href = url;
+                this.tweens.add({
+                    targets: this.logo,
+                    x: 50,
+                    y: 50,
+                    duration: 1000,
+                    ease: 'Power2',
+                    onComplete: () => {
+                        const url = `${window.location.origin}/${label.toLowerCase()}`;
+                        window.location.href = url;
+                    }
+                });
             });
+
+            EventBus.emit('donut-clicked'); // Emit event to signal donut click
         });
 
         this.links = this.links || {};
