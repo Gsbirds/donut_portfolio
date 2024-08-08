@@ -7,6 +7,13 @@ export class MainMenu extends Scene {
     }
 
     create() {
+        const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
+
+        if (isDonutClicked) {
+            this.logo = this.add.image(100, 50, 'closed').setDepth(100).setScale(0.3); // adjust to match final state
+            return;
+        }
+
         this.showInitialImages(() => {
             const background = this.add.image(512, 384, 'background');
             background.setAlpha(0);
@@ -23,8 +30,8 @@ export class MainMenu extends Scene {
             this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut');
             this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut');
             this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut');
-            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Art', 'fifth-donut');
-            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut');
+            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Art', 'fifth-donut'); 
+            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut'); 
 
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
@@ -147,13 +154,12 @@ export class MainMenu extends Scene {
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
+                        EventBus.emit('donut-clicked', true);
                         const url = `${window.location.origin}/${name.toLowerCase()}`;
                         window.location.href = url;
                     }
                 });
             });
-
-            EventBus.emit('donut-clicked');
         });
     }
 
@@ -196,13 +202,12 @@ export class MainMenu extends Scene {
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
+                        EventBus.emit('donut-clicked', true);
                         const url = `${window.location.origin}/${label.toLowerCase()}`;
                         window.location.href = url;
                     }
                 });
             });
-
-            EventBus.emit('donut-clicked'); // Emit event to signal donut click
         });
 
         this.links = this.links || {};

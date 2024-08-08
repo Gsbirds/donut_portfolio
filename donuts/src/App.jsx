@@ -23,12 +23,16 @@ function App() {
 
         EventBus.on('current-scene-ready', handleCurrentSceneReady);
         EventBus.on('logo-position', handleLogoPosition);
-        EventBus.on('donut-clicked', setDonutClicked);
+        EventBus.on('donut-clicked', (clicked) => {
+            setDonutClicked(clicked);
+            localStorage.setItem('donutClicked', JSON.stringify(clicked));
+        });
 
 
         return () => {
             EventBus.off('current-scene-ready', handleCurrentSceneReady);
             EventBus.off('logo-position', handleLogoPosition);
+            EventBus.removeListener('donut-clicked');
 
         };
     }, []);
@@ -44,20 +48,20 @@ function App() {
     return (
         <div>
             {/* <h5>Gabby's Donut Shop</h5> */}
-            {!donutClicked && (
+            {/* {location.pathname !== "/" && donutClicked && ( */}
                 <div id="app">
-                    <PhaserGame ref={phaserRef} setDonutClicked={setDonutClicked} />
+                    <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} />
                     {sceneReady && <div></div>}
                 </div>
-            )}
+            {/* )} */}
             <Router>
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
                 </Routes>
             </Router>
-       
         </div>
     );
+    
 }
 
 export default App;

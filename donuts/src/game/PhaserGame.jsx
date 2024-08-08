@@ -30,10 +30,16 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, s
             ref.current.scene = currentScene;
         });
 
+           EventBus.on('donut-clicked', (clicked) => {
+            setDonutClicked(clicked);
+            localStorage.setItem('donutClicked', JSON.stringify(clicked));
+        });
+
         return () => {
             EventBus.removeListener('current-scene-ready');
+            EventBus.removeListener('donut-clicked');
         };
-    }, [currentActiveScene, ref]);
+    }, [currentActiveScene, ref, setDonutClicked]);
 
     return <div id="game-container"></div>;
 });
