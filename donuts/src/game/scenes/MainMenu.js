@@ -10,7 +10,7 @@ export class MainMenu extends Scene {
         this.showInitialImages(() => {
             const background = this.add.image(512, 384, 'background');
             background.setAlpha(0);
-            this.logo = this.add.image(612, 495, 'logo').setDepth(100).setScale(0.75);
+            this.logo = this.add.image(712, 495, 'logo').setDepth(100).setScale(0.75);
 
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75, 'Projects', 'second-donut');
@@ -46,10 +46,10 @@ export class MainMenu extends Scene {
             });
         };
 
-        showImage(612, 495, 'closed', 0.75, 100, () => {
-            showImage(612, 495, 'mostlyclosed', 0.75, 100, () => {
-                showImage(612, 495, 'halfway', 0.75, 100, () => {
-                    showImage(612, 495, 'mostlyopen', 0.75, 100, callback);
+        showImage(712, 495, 'closed', 0.75, 100, () => {
+            showImage(712, 495, 'mostlyclosed', 0.75, 100, () => {
+                showImage(712, 495, 'halfway', 0.75, 100, () => {
+                    showImage(712, 495, 'mostlyopen', 0.75, 100, callback);
                 });
             });
         });
@@ -142,7 +142,7 @@ export class MainMenu extends Scene {
             this.reverseImages(() => {
                 this.tweens.add({
                     targets: this.logo,
-                    x: 50,
+                    x: 100,  // Adjusted x-coordinate
                     y: 50,
                     duration: 1000,
                     ease: 'Power2',
@@ -191,7 +191,7 @@ export class MainMenu extends Scene {
             this.reverseImages(() => {
                 this.tweens.add({
                     targets: this.logo,
-                    x: 50,
+                    x: 100,  // Adjusted x-coordinate
                     y: 50,
                     duration: 1000,
                     ease: 'Power2',
