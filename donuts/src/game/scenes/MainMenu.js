@@ -8,36 +8,159 @@ export class MainMenu extends Scene {
 
     create() {
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
-
+        
         if (isDonutClicked) {
-            this.logo = this.add.image(100, 50, 'closed').setDepth(100).setScale(0.3); // adjust to match final state
+            this.logo = this.add.image(100, 50, 'closed').setDepth(100).setScale(0.3);
+    
+            this.createSlidingDonuts();
+    
+            this.logo.setInteractive();
+    
+            this.logo.on('pointerover', () => {
+                this.input.manager.canvas.style.cursor = 'pointer';
+                this.logo.setTexture('mostlyclosed'); 
+            });
+    
+            this.logo.on('pointerout', () => {
+                this.input.manager.canvas.style.cursor = 'default';
+                this.logo.setTexture('closed');
+            });
+    
             return;
         }
-
+    
         this.showInitialImages(() => {
             const background = this.add.image(512, 384, 'background');
             background.setAlpha(0);
             this.logo = this.add.image(712, 495, 'logo').setDepth(100).setScale(0.75);
-
+    
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75, 'Projects', 'second-donut');
             this.createInteractiveZone(this.logo.x + 250, this.logo.y + 200, 75, 'About', 'third-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 300, 75, 'Contact', 'fourth-donut');
             this.createInteractiveZone(this.logo.x + 250, this.logo.y + 300, 75, 'Art', 'fifth-donut');
             this.createInteractiveZone(this.logo.x + 400, this.logo.y + 300, 75, 'Blog', 'sixth-donut');
-
+    
             this.createLink(this.logo.x - 190, this.logo.y + 130, 'Home', 'first-donut');
             this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut');
             this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut');
             this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut');
             this.createLink(this.logo.x + 250, this.logo.y + 300, 'Art', 'fifth-donut'); 
             this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut'); 
-
+    
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
     }
+    
 
+    createSlidingDonuts() {
+        const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut', 'choco-donut'];
+        const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Art', 'Blog'];
+    
+        const donuts = [];
+        const linkTexts = [];
+    
+        const initialYPosition = 100;
+    
+        for (let i = 0; i < donutImages.length; i++) {
+            const initialXPosition = 200 + (i * 150); 
+    
+            const donut = this.add.image(initialXPosition, initialYPosition, donutImages[i])
+                .setDepth(101)
+                .setScale(0.25)
+                .setAlpha(0)
+                .setInteractive()
+                .setName(donutLinks[i]);
+    
+            const linkText = this.add.text(initialXPosition, initialYPosition + 70, donutLinks[i], { fontSize: '16px', fill: '#a94064' })
+                .setOrigin(0.5)
+                .setDepth(102)
+                .setAlpha(0)
+                .setInteractive();
+    
+            donut.on('pointerover', () => {
+                this.input.manager.canvas.style.cursor = 'pointer';
+                this.highlightLink(donutLinks[i], true);
+    
+                this.tweens.add({
+                    targets: donut,
+                    scale: 0.4,
+                    duration: 200,
+                    ease: 'Power2'
+                });
+    
+                this.tweens.add({
+                    targets: linkText,
+                    scale: 1.2, 
+                    duration: 200,
+                    ease: 'Power2'
+                });
+            });
+    
+            donut.on('pointerout', () => {
+                this.input.manager.canvas.style.cursor = 'default';
+                this.highlightLink(donutLinks[i], false);
+    
+                this.tweens.add({
+                    targets: donut,
+                    scale: 0.3,
+                    duration: 200,
+                    ease: 'Power2'
+                });
+    
+                this.tweens.add({
+                    targets: linkText,
+                    scale: 1, 
+                    duration: 200,
+                    ease: 'Power2'
+                });
+            });
+    
+            linkText.on('pointerdown', () => {
+                const url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                window.location.href = url;
+            });
+    
+            donut.on('pointerdown', () => {
+                const url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                window.location.href = url;
+            });
+    
+            donuts.push(donut);
+            linkTexts.push(linkText);
+        }
+    
+        this.logo.setInteractive();
+    
+        this.logo.on('pointerover', () => {
+            this.input.manager.canvas.style.cursor = 'pointer';
+            for (let i = 0; i < donuts.length; i++) {
+                this.tweens.add({
+                    targets: donuts[i],
+                    x: 350 + (i * 150),
+                    alpha: 1,
+                    duration: 500,
+                    ease: 'Power2'
+                });
+    
+                this.tweens.add({
+                    targets: linkTexts[i],
+                    x: 350 + (i * 150),
+                    alpha: 1,
+                    duration: 500,
+                    ease: 'Power2'
+                });
+            }
+        });
+    
+        this.logo.on('pointerout', () => {
+            this.input.manager.canvas.style.cursor = 'default';
+        });
+    }
+    
+    
+    
     showInitialImages(callback) {
         const background = this.add.image(512, 384, 'background');
         background.setAlpha(0);
@@ -149,18 +272,20 @@ export class MainMenu extends Scene {
             this.reverseImages(() => {
                 this.tweens.add({
                     targets: this.logo,
-                    x: 100,  // Adjusted x-coordinate
+                    x: 100,
                     y: 50,
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
-                        EventBus.emit('donut-clicked', true);
                         const url = `${window.location.origin}/${name.toLowerCase()}`;
                         window.location.href = url;
+                        EventBus.emit('donut-clicked', true);
                     }
                 });
             });
+
         });
+
     }
 
     createLink(x, y, label, imageName) {
@@ -191,7 +316,7 @@ export class MainMenu extends Scene {
             }
 
             this.logo = this.add.image(512, 300, imageName).setDepth(200).setScale(0.75);
-
+            
             this.addSprite(spriteName);
 
             this.reverseImages(() => {
@@ -202,7 +327,6 @@ export class MainMenu extends Scene {
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
-                        EventBus.emit('donut-clicked', true);
                         const url = `${window.location.origin}/${label.toLowerCase()}`;
                         window.location.href = url;
                     }
