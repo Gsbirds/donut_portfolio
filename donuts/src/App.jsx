@@ -3,7 +3,7 @@ import { PhaserGame } from './game/PhaserGame';
 import { EventBus } from './game/EventBus';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Projects from './projects';
-
+import Info from './info';
 
 function App() {
     const phaserRef = useRef();
@@ -57,6 +57,8 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
+                    <Route path="/about" element={<Info />} />
+
                 </Routes>
             </Router>
         </div>

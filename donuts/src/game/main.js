@@ -24,9 +24,16 @@ const config = {
 };
 
 const StartGame = (parent) => {
+    const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
+
+    if (isDonutClicked) {
+        document.getElementById(parent).style.height = '300px';
+    } else {
+        document.getElementById(parent).style.height = '1020px'; 
+    }
 
     return new Phaser.Game({ ...config, parent });
-
 }
+
 
 export default StartGame;
