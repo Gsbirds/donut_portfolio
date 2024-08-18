@@ -229,6 +229,13 @@ footer ul {
   margin-bottom: -200px;
 }
 
+.cedarville-cursive-regular {
+  font-family: "Cedarville Cursive", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
 #game-container {
   position: fixed;
   top: 13%;
@@ -238,8 +245,6 @@ footer ul {
   padding-top: 2rem;
 }
 
-.cedarville-cursive-regular {
-  font-family: "Cedarville Cursive", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
+
+
+
