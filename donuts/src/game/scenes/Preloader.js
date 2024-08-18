@@ -43,6 +43,8 @@ export class Preloader extends Scene
         this.load.image('blue-donut', 'Blue-donut.png');
         this.load.image('choco-donut', 'Brown-donut.png');
 
+        
+
     }
 
     create ()

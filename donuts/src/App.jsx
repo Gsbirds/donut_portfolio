@@ -6,7 +6,7 @@ import Projects from './projects';
 import Info from './info';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-
+import Contact from './contact';
 
 function App() {
     const phaserRef = useRef();
@@ -60,6 +60,8 @@ function App() {
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/about" element={<Info />} />
+                    <Route path="/contact" element={<Contact />} />
+
 
                 </Routes>
             </Router>
