@@ -7,10 +7,15 @@ export class MainMenu extends Scene {
     }
 
     create() {
+         if (window.location.pathname === '/home') {
+            localStorage.removeItem('donutClicked');
+
+         }
+
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
         
         if (isDonutClicked) {
-            this.logo = this.add.image(100, 50, 'closed').setDepth(100).setScale(0.3);
+            this.logo = this.add.image(100, 30, 'closed').setDepth(100).setScale(0.3);
     
             this.createSlidingDonuts();
     
@@ -51,8 +56,9 @@ export class MainMenu extends Scene {
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
+
     }
-    
+
 
     createSlidingDonuts() {
         const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut', 'choco-donut'];

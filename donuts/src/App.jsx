@@ -4,6 +4,9 @@ import { EventBus } from './game/EventBus';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Projects from './projects';
 import Info from './info';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+
 
 function App() {
     const phaserRef = useRef();
@@ -47,13 +50,12 @@ function App() {
 
     return (
         <div>
-            {/* <h5>Gabby's Donut Shop</h5> */}
-            {/* {location.pathname !== "/" && donutClicked && ( */}
-                <div id="app">
-                    <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} />
-                    {sceneReady && <div></div>}
-                </div>
-            {/* )} */}
+        <div id="app">
+            <div className="phaser-container">
+                <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} />
+                {sceneReady && <div></div>}
+            </div>
+        </div>
             <Router>
                 <Routes>
                     <Route path="/projects" element={<Projects />} />

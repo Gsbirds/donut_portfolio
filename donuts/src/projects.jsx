@@ -1,9 +1,4 @@
-import { useRef } from 'react';
-import { PhaserGame } from './game/PhaserGame';
-import { EventBus } from './game/EventBus';
-
 function Projects() {
-    const phaserRef = useRef();
 
     return (
         <div className="parallax">
@@ -27,7 +22,7 @@ function Projects() {
                                 <li className="tech2">Javascript, Python, Django, React</li>
                             </ul>
                         </div>
-                        {/* <div id="myCarousel2" className="carousel slide">
+                        <div id="myCarousel2" className="carousel slide">
                             <div className="carousel-indicators">
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -35,13 +30,13 @@ function Projects() {
                             </div>
                             <div className="carousel-inner">
                                 <div className="carousel-item active">
-                                    <img src="./static/reph1.png" className="d-block" id="first-phil" alt="..." />
+                                    <img src="assets/reph1.png" className="d-block" id="first-phil" alt="..." />
                                 </div>
                                 <div className="carousel-item">
-                                    <img src="./static/reph2.png" className="d-block" id="second-phil" alt="..." />
+                                    <img src="assets/reph2.png" className="d-block" id="second-phil" alt="..." />
                                 </div>
                                 <div className="carousel-item">
-                                    <img src="./static/reph3.png" className="d-block" alt="..." />
+                                    <img src="assets/reph3.png" className="d-block" alt="..." />
                                 </div>
                             </div>
                             <button className="carousel-control-prev" type="button" data-bs-target="#myCarousel2" data-bs-slide="prev">
@@ -52,7 +47,7 @@ function Projects() {
                                 <span className="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span className="visually-hidden">Next</span>
                             </button>
-                        </div> */}
+                        </div>
                     </article>
                 </section>
             </section>
@@ -73,7 +68,7 @@ function Projects() {
                                 <li className="tech2">Java, Android Studio</li>
                             </ul>
                         </div>
-                        <img src="./static/Screenshot from 2023-08-31 11-29-52.png" className="d-block" alt="..." />
+                        <img src="assets/Screenshot from 2023-08-31 11-29-52.png" className="d-block" alt="..." />
                     </article>
                 </section>
             </section>
@@ -94,7 +89,7 @@ function Projects() {
                                 <li className="tech2">Python, Javascript, React, Starlette</li>
                             </ul>
                         </div>
-                        <img src="./static/blog2.png" className="d-block" alt="..." />
+                        <img src="assets/blog2.png" className="d-block" alt="..." />
                     </article>
                 </section>
             </section>
@@ -115,7 +110,7 @@ function Projects() {
                                 <li className="tech2">Javascript, Python, FastAPI, React</li>
                             </ul>
                         </div>
-                        {/* <div id="myCarousel1" className="carousel slide">
+                        <div id="myCarousel1" className="carousel slide">
                             <div className="carousel-indicators">
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -123,13 +118,13 @@ function Projects() {
                             </div>
                             <div className="carousel-inner">
                                 <div className="carousel-item active">
-                                    <img src="./static/checkit5.png" className="d-block" id="first-phil" alt="..." />
+                                    <img src="assets//checkit5.png" className="d-block" id="first-phil" alt="..." />
                                 </div>
                                 <div className="carousel-item">
-                                    <img src="./static/checkit3.png" className="d-block" id="second-phil" alt="..." />
+                                    <img src="assets/checkit3.png" className="d-block" id="second-phil" alt="..." />
                                 </div>
                                 <div className="carousel-item">
-                                    <img src="./static/checkit4.png" className="d-block" alt="..." />
+                                    <img src="assets/checkit4.png" className="d-block" alt="..." />
                                 </div>
                             </div>
                             <button className="carousel-control-prev" type="button" data-bs-target="#myCarousel1" data-bs-slide="prev">
@@ -140,7 +135,7 @@ function Projects() {
                                 <span className="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span className="visually-hidden">Next</span>
                             </button>
-                        </div> */}
+                        </div>
                     </article>
                 </section>
             </section>
@@ -166,8 +161,8 @@ function Projects() {
                                 <li className="tech2">Javascript, Python, Django, React</li>
                             </ul>
                         </div>
-                        {/* <div className="projects"> */}
-                            {/* <div id="myCarousel" className="carousel slide">
+                        <div className="projects"> 
+                            <div id="myCarousel" className="carousel slide">
                                 <div className="carousel-indicators">
                                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -175,13 +170,13 @@ function Projects() {
                                 </div>
                                 <div className="carousel-inner">
                                     <div className="carousel-item active">
-                                        <img src="./static/philhub1.png" className="d-block" id="first-phil" alt="..." />
+                                        <img src="assets/philhub1.png" className="d-block" id="first-phil" alt="..." />
                                     </div>
                                     <div className="carousel-item">
-                                        <img src="./static/philhub2.png" className="d-block" id="second-phil" alt="..." />
+                                        <img src="assets/philhub2.png" className="d-block" id="second-phil" alt="..." />
                                     </div>
                                     <div className="carousel-item">
-                                        <img src="./static/philhub3.png" className="d-block" alt="..." />
+                                        <img src="assets/philhub3.png" className="d-block" alt="..." />
                                     </div>
                                 </div>
                                 <button className="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
@@ -193,7 +188,7 @@ function Projects() {
                                     <span className="visually-hidden">Next</span>
                                 </button>
                             </div>
-                        </div> */}
+                        </div> 
                     </article>
                 </section>
             </section>
