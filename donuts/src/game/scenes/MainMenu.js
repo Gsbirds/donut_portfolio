@@ -59,13 +59,14 @@ export class MainMenu extends Scene {
 
     }
 
-
     createSlidingDonuts() {
         const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut', 'choco-donut'];
         const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Art', 'Blog'];
     
         const donuts = [];
         const linkTexts = [];
+        let hideDonutsTimer; // Timer for hiding donuts after pointer out
+        let menuStaysOut = false; // Flag to keep the menu out when the box is clicked
     
         const initialYPosition = 100;
     
@@ -86,6 +87,7 @@ export class MainMenu extends Scene {
                 .setInteractive();
     
             donut.on('pointerover', () => {
+                clearTimeout(hideDonutsTimer); // Clear the hide timer if pointer re-enters
                 this.input.manager.canvas.style.cursor = 'pointer';
                 this.highlightLink(donutLinks[i], true);
     
@@ -121,6 +123,12 @@ export class MainMenu extends Scene {
                     duration: 200,
                     ease: 'Power2'
                 });
+    
+                if (!menuStaysOut) {
+                    hideDonutsTimer = setTimeout(() => {
+                        this.hideDonuts(donuts, linkTexts);
+                    }, 1500);
+                }
             });
     
             linkText.on('pointerdown', () => {
@@ -140,30 +148,77 @@ export class MainMenu extends Scene {
         this.logo.setInteractive();
     
         this.logo.on('pointerover', () => {
+            clearTimeout(hideDonutsTimer); // Clear the hide timer if pointer re-enters
             this.input.manager.canvas.style.cursor = 'pointer';
-            for (let i = 0; i < donuts.length; i++) {
-                this.tweens.add({
-                    targets: donuts[i],
-                    x: 350 + (i * 150),
-                    alpha: 1,
-                    duration: 500,
-                    ease: 'Power2'
-                });
-    
-                this.tweens.add({
-                    targets: linkTexts[i],
-                    x: 350 + (i * 150),
-                    alpha: 1,
-                    duration: 500,
-                    ease: 'Power2'
-                });
+            if (!menuStaysOut) {
+                this.showDonuts(donuts, linkTexts);
             }
         });
     
         this.logo.on('pointerout', () => {
             this.input.manager.canvas.style.cursor = 'default';
+    
+            if (!menuStaysOut) {
+                hideDonutsTimer = setTimeout(() => {
+                    this.hideDonuts(donuts, linkTexts);
+                }, 1500);
+            }
+        });
+    
+        this.logo.on('pointerdown', () => {
+            if (menuStaysOut) {
+                // If the menu is out, clicking will hide the donuts
+                this.hideDonuts(donuts, linkTexts);
+                menuStaysOut = false; // Set the state to false so the next click or hover shows the donuts
+            } else {
+                // If the menu is not out, clicking will keep the donuts visible
+                clearTimeout(hideDonutsTimer); // Prevent hiding when the box is clicked
+                this.showDonuts(donuts, linkTexts); // Ensure donuts are shown
+                menuStaysOut = true; // Set the state to true to keep the donuts out
+            }
         });
     }
+    
+    showDonuts(donuts, linkTexts) {
+        for (let i = 0; i < donuts.length; i++) {
+            this.tweens.add({
+                targets: donuts[i],
+                x: 350 + (i * 150),
+                alpha: 1,
+                duration: 500,
+                ease: 'Power2'
+            });
+    
+            this.tweens.add({
+                targets: linkTexts[i],
+                x: 350 + (i * 150),
+                alpha: 1,
+                duration: 500,
+                ease: 'Power2'
+            });
+        }
+    }
+    
+    hideDonuts(donuts, linkTexts) {
+        for (let i = 0; i < donuts.length; i++) {
+            this.tweens.add({
+                targets: donuts[i],
+                x: 200 + (i * 150), // Move them back to their original position
+                alpha: 0,
+                duration: 500,
+                ease: 'Power2'
+            });
+    
+            this.tweens.add({
+                targets: linkTexts[i],
+                x: 200 + (i * 150),
+                alpha: 0,
+                duration: 500,
+                ease: 'Power2'
+            });
+        }
+    }
+    
     
     
     
