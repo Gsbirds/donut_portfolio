@@ -208,7 +208,7 @@ export class MainMenu extends Scene {
         for (let i = 0; i < donuts.length; i++) {
             this.tweens.add({
                 targets: donuts[i],
-                x: 200 + (i * 150), // Move them back to their original position
+                x: 200 + (i * 150),
                 alpha: 0,
                 duration: 500,
                 ease: 'Power2'
@@ -388,7 +388,7 @@ export class MainMenu extends Scene {
             this.reverseImages(() => {
                 this.tweens.add({
                     targets: this.logo,
-                    x: 100,  // Adjusted x-coordinate
+                    x: 100,
                     y: 50,
                     duration: 1000,
                     ease: 'Power2',
@@ -400,6 +400,7 @@ export class MainMenu extends Scene {
                             url = `${window.location.origin}/${label.toLowerCase()}`;
                         }
                         window.location.href = url;
+                        EventBus.emit('donut-clicked', true);
                     }
                 });
             });

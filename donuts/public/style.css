@@ -14,9 +14,6 @@ body {
   padding-bottom: 20px;
 }
 
-/* #game-container{
-  z-index: 1000;
-} */
 
 #app {
   width: 100%;
@@ -225,7 +222,6 @@ text-align: left;
 
 .inkpad2{
   width:800px;
-  /* padding-left: 100px; */
   align-items: center;
   margin-top: -220px;
   margin-bottom: -200px;

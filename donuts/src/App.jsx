@@ -12,7 +12,7 @@ function App() {
     const phaserRef = useRef();
     const [logoPosition, setLogoPosition] = useState({ x: 0, y: 0 });
     const [sceneReady, setSceneReady] = useState(false);
-    const [donutClicked, setDonutClicked]= useState(false);
+    const [donutClicked, setDonutClicked] = useState(false);
 
     useEffect(() => {
         const handleCurrentSceneReady = (scene) => {
@@ -31,47 +31,45 @@ function App() {
             localStorage.setItem('donutClicked', JSON.stringify(clicked));
         });
 
-
         return () => {
             EventBus.off('current-scene-ready', handleCurrentSceneReady);
             EventBus.off('logo-position', handleLogoPosition);
             EventBus.removeListener('donut-clicked');
-
         };
     }, []);
 
-        const changeScene = () => {
+    const changeScene = () => {
         const scene = phaserRef.current.scene;
         if (scene) {
             scene.changeScene();
         }
     }
 
-
     return (
         <div>
-        <div id="app">
-            <div className="phaser-container">
-                <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} />
-                {sceneReady && <div></div>}
+            <div id="app">
+                <div className="phaser-container">
+                    <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} />
+                    {sceneReady && <div></div>}
+                </div>
             </div>
-        </div>
             <Router>
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/about" element={<Info />} />
                     <Route path="/contact" element={<Contact />} />
-
-
                 </Routes>
             </Router>
 
-            <footer>
-            <p> <i class="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
-            </footer>
+            {donutClicked ? (
+                <footer>
+                    <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
+                </footer>
+            ) : (
+                ''
+            )}
         </div>
     );
-    
 }
 
 export default App;
