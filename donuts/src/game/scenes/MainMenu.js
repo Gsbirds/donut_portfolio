@@ -137,7 +137,12 @@ export class MainMenu extends Scene {
             });
     
             donut.on('pointerdown', () => {
-                const url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                let url;
+                if (donutLinks[i] === 'Blog') {
+                    url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+                } else {
+                    url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                }
                 window.location.href = url;
             });
     
@@ -351,17 +356,17 @@ export class MainMenu extends Scene {
 
     createLink(x, y, label, imageName) {
         const linkText = this.add.text(x, y, label, { fontSize: '16px', fill: '#a94064' }).setOrigin(0.5).setDepth(101).setInteractive();
-
+    
         linkText.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
             linkText.setStyle({ fill: '#fc5c85' });
         });
-
+    
         linkText.on('pointerout', () => {
             this.input.manager.canvas.style.cursor = 'default';
             linkText.setStyle({ fill: '#a94064' });
         });
-
+    
         linkText.on('pointerdown', () => {
             let spriteName;
             if (label === 'Home' || label === 'Art') {
@@ -371,15 +376,15 @@ export class MainMenu extends Scene {
             } else if (label === 'About' || label === 'Contact') {
                 spriteName = 'choco-donut';
             }
-
+    
             if (this.logo) {
                 this.logo.destroy();
             }
-
+    
             this.logo = this.add.image(512, 300, imageName).setDepth(200).setScale(0.75);
             
             this.addSprite(spriteName);
-
+    
             this.reverseImages(() => {
                 this.tweens.add({
                     targets: this.logo,
@@ -388,16 +393,22 @@ export class MainMenu extends Scene {
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
-                        const url = `${window.location.origin}/${label.toLowerCase()}`;
+                        let url;
+                        if (label === 'Blog') {
+                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+                        } else {
+                            url = `${window.location.origin}/${label.toLowerCase()}`;
+                        }
                         window.location.href = url;
                     }
                 });
             });
         });
-
+    
         this.links = this.links || {};
         this.links[label] = linkText;
     }
+    
 
     highlightLink(label, highlight) {
         const linkText = this.links[label];
