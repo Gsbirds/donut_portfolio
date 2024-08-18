@@ -191,6 +191,9 @@ function Projects() {
                     </article>
                 </section>
             </section>
+
+            <img class="inkpad2" src="assets/Ssssnakepad1.png"></img>
+
         </div>
     );
 }

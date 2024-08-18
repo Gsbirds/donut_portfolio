@@ -65,6 +65,10 @@ function App() {
 
                 </Routes>
             </Router>
+
+            <footer>
+            <p> <i class="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
+            </footer>
         </div>
     );
     
