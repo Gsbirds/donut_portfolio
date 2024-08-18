@@ -130,7 +130,7 @@ body {
 }
 
 #projects img:hover {
-  background-color: pink;
+  background-color: #e79fa8;
   -moz-transition: .30s ease-in-out;
   -o-transition: .30s ease-in-out;
   transition: .30s ease-in-out;
