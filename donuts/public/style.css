@@ -225,8 +225,10 @@ text-align: left;
 
 .inkpad2{
   width:800px;
-  padding-left: 100px;
+  /* padding-left: 100px; */
+  align-items: center;
   margin-top: -220px;
+  margin-bottom: -200px;
 } 
 
 #game-container {
