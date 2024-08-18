@@ -79,15 +79,18 @@ export class MainMenu extends Scene {
                 .setAlpha(0)
                 .setInteractive()
                 .setName(donutLinks[i]);
+
     
-            const linkText = this.add.text(initialXPosition, initialYPosition + 70, donutLinks[i], { fontSize: '16px', fill: '#a94064' })
+            const linkText = this.add.text(initialXPosition, initialYPosition + 70, donutLinks[i], {   fontSize:25,
+                fontFamily: 'Cedarville Cursive',
+                className: 'cedarville-cursive-regular',fill: '#a94064' })
                 .setOrigin(0.5)
                 .setDepth(102)
                 .setAlpha(0)
                 .setInteractive();
     
             donut.on('pointerover', () => {
-                clearTimeout(hideDonutsTimer); // Clear the hide timer if pointer re-enters
+                clearTimeout(hideDonutsTimer);
                 this.input.manager.canvas.style.cursor = 'pointer';
                 this.highlightLink(donutLinks[i], true);
     
@@ -355,8 +358,12 @@ export class MainMenu extends Scene {
     }
 
     createLink(x, y, label, imageName) {
-        const linkText = this.add.text(x, y, label, { fontSize: '16px', fill: '#a94064' }).setOrigin(0.5).setDepth(101).setInteractive();
-    
+        const linkText = this.add.text(x, y, label, {
+            fontSize:25,
+            fontFamily: 'Cedarville Cursive', // Apply the font directly if loaded via CSS
+            className: 'cedarville-cursive-regular', // Apply the class name
+        }).setOrigin(0.5).setDepth(101).setInteractive();
+        
         linkText.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
             linkText.setStyle({ fill: '#fc5c85' });
