@@ -14,7 +14,6 @@ body {
   padding-bottom: 20px;
 }
 
-
 #app {
   width: 100%;
   overflow: hidden;
@@ -43,7 +42,7 @@ body {
   font-size: large;
 }
 
-.tech{
+.tech {
   padding-top: 1rem;
   color: #8d5f74;
   font-family: 'IBM Plex Mono', monospace;
@@ -55,7 +54,6 @@ body {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-
 .worked {
   padding-top: 4rem;
   color: #8d5f74;
@@ -65,11 +63,11 @@ body {
 .section-blue {
   display: flex;
   flex-direction: column;
-  align-items:center;
+  align-items: center;
 }
 
 .text {
-  width: 100%; 
+  width: 100%;
   max-width: 600px;
   padding-right: 2rem;
   text-align: right;
@@ -88,6 +86,34 @@ body {
   text-align: right;
 }
 
+.introbox {
+  width: 100%;
+  padding: 1rem;
+  color: white;
+  font-family: 'IBM Plex Mono', monospace;
+  background-color: #8d5f74;
+  font-size: large;
+  line-height: 1.17;
+  border-radius: 25px;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  margin-top: 200px;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .blackbox, .introbox {
+    font-size: medium;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .blackbox, .introbox {
+    font-size: small;
+    padding: 0.5rem;
+  }
+}
+
 .d-block {
   width: 900px;
 }
@@ -96,7 +122,7 @@ body {
   margin: 2rem 0 4rem 0;
   padding: 1rem;
   border-left: 1px solid #41b3a3;
-  border-top: 1px solid var #41b3a3;
+  border-top: 1px solid #41b3a3;
   border-radius: 25px;
   background-color: #8d5f74;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
@@ -121,8 +147,6 @@ body {
 
 #projects img:hover {
   background-color: #e79fa8;
-  -moz-transition: .30s ease-in-out;
-  -o-transition: .30s ease-in-out;
   transition: .30s ease-in-out;
 }
 
@@ -144,26 +168,9 @@ footer ul {
   font-size: 3rem;
 }
 
-.name{
-text-align: left;
-}
-
-
-.introbox {
-  width: 100%;
-  padding: 1rem;
-  color: white;
-  font-family: 'IBM Plex Mono', monospace;
-  background-color: #8d5f74;
-  font-size: large;
-  line-height: 1.17;
-  border-radius: 25px;
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-  margin-top: 200px;
+.name {
   text-align: left;
 }
-
-
 
 #contact {
   padding-left: 1rem;
@@ -174,7 +181,7 @@ text-align: left;
   margin-right: auto;
   margin-left: auto;
   margin-top: 200px;
-  color:#fff;
+  color: #fff;
   width: 800px;
   font-family: 'IBM Plex Mono', monospace;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
@@ -187,17 +194,14 @@ text-align: left;
   padding-bottom: 1rem;
   border-radius: 30px;
   background-color: #8d5f74;
-  margin-right: auto;
-  margin-left: auto;
-  width: 800px;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
-#contact a{
-  color:black;
-} 
+#contact a {
+  color: black;
+}
 
-.contact_btn{
+.contact_btn {
   outline: none;
   background-color: #e79fa8;
   color: #fff;
@@ -209,38 +213,30 @@ text-align: left;
   box-shadow: 0 10px 14px 0 rgba(0, 0, 0, 0.24), 0 15px 48px 0 rgba(0, 0, 0, 0.19);
 }
 
-.contact_btn:hover{
-  -webkit-transform: scale(1.1);
-
+.contact_btn:hover {
+  transform: scale(1.1);
 }
 
-.inkpad{
-  width:500px;
+.inkpad {
+  width: 500px;
   margin-top: -120px;
+}
 
-}  
-
-.inkpad2{
-  width:800px;
+.inkpad2 {
+  width: 800px;
   align-items: center;
   margin-top: -220px;
   margin-bottom: -200px;
-} 
+}
 
 #game-container {
   position: fixed;
-  top: 13%; 
-  left: 47%; 
+  top: 13%;
+  left: 47%;
   transform: translate(-50%, -50%);
   z-index: 1000;
   padding-top: 2rem;
-  /* width: 100%;
-  max-width: 1524px;
-  height: 1020px; 
-  max-height: 1020px;  */
-
 }
-
 
 .cedarville-cursive-regular {
   font-family: "Cedarville Cursive", cursive;

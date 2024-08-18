@@ -61,12 +61,10 @@ function App() {
                 </Routes>
             </Router>
 
-            {donutClicked ? (
+            {(location.pathname === '/contact' || location.pathname === '/projects' ||location.pathname === '/about') &&(
                 <footer>
                     <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
                 </footer>
-            ) : (
-                ''
             )}
         </div>
     );
