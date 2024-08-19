@@ -101,16 +101,28 @@ body {
 }
 
 @media (max-width: 768px) {
-  .blackbox, .introbox {
+  .blackbox, .introbox, #projects img  {
     font-size: medium;
     padding: 0.75rem;
+    width:400px;
+    /* margin-left:15rem; */
   }
+  /* #game-container {
+    position: fixed;
+    top: 13%;
+    left: 47%;
+    transform: translate(-50%, -50%);
+    padding-top: 2rem;
+  } */
 }
 
 @media (max-width: 480px) {
-  .blackbox, .introbox {
+  .blackbox, .introbox, #projects img  {
     font-size: small;
     padding: 0.5rem;
+    width:300px;
+    /* margin-left:15rem; */
+
   }
 }
 
@@ -241,10 +253,11 @@ footer ul {
   top: 13%;
   left: 47%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
   padding-top: 2rem;
 }
 
 
 
-
+.projects-padding{
+  padding-top: 8rem;
+}

@@ -2,6 +2,7 @@ function Projects() {
 
     return (
         <div className="parallax">
+            <div className="projects-padding"> 
             <h2 className="worked"><b>Projects I've worked on</b></h2>
             <section className="section-blue">
                 <section id="projects">
@@ -193,7 +194,7 @@ function Projects() {
             </section>
 
             <img class="inkpad2" src="assets/Ssssnakepad1.png"></img>
-
+            </div>
         </div>
     );
 }
