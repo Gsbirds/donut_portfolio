@@ -37,13 +37,14 @@ body {
 
 .project-title {
   padding-top: 1rem;
+  text-align: left;
   color: #8d5f74;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: large;
 }
 
 .tech {
   padding-top: 1rem;
+  text-align: left;
   color: #8d5f74;
   font-family: 'IBM Plex Mono', monospace;
   font-size: medium;
@@ -105,25 +106,32 @@ body {
     font-size: medium;
     padding: 0.75rem;
     width:400px;
-    /* margin-left:15rem; */
   }
-  /* #game-container {
-    position: fixed;
-    top: 13%;
-    left: 47%;
-    transform: translate(-50%, -50%);
+
+  .worked {
     padding-top: 2rem;
-  } */
+    color: #8d5f74;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  
 }
+
 
 @media (max-width: 480px) {
   .blackbox, .introbox, #projects img  {
     font-size: small;
     padding: 0.5rem;
     width:300px;
-    /* margin-left:15rem; */
 
   }
+
+    .worked {
+    padding-top: 2rem;
+    color: #8d5f74;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
 }
 
 .d-block {
