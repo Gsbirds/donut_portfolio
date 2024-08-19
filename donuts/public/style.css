@@ -111,6 +111,7 @@ body {
     padding-top: 2rem;
     color: #8d5f74;
     font-family: 'IBM Plex Mono', monospace;
+    text-align: center;
   }
 
   
@@ -129,6 +130,8 @@ body {
     padding-top: 2rem;
     color: #8d5f74;
     font-family: 'IBM Plex Mono', monospace;
+    text-align: center;
+
   }
 
 }
