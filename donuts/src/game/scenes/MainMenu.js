@@ -7,228 +7,241 @@ export class MainMenu extends Scene {
     }
 
     create() {
-         if (window.location.pathname === '/home') {
+        const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
+    
+        if (window.location.pathname === '/home') {
             localStorage.removeItem('donutClicked');
-
-         }
-
+        }
+    
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
-        
+    
         if (isDonutClicked) {
-            this.logo = this.add.image(100, 30, 'closed').setDepth(100).setScale(0.3);
-    
-            this.createSlidingDonuts();
-    
+            this.logo = this.add.image(100, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
+            this.createSlidingDonuts(scaleFactor);
             this.logo.setInteractive();
-    
             this.logo.on('pointerover', () => {
                 this.input.manager.canvas.style.cursor = 'pointer';
-                this.logo.setTexture('mostlyclosed'); 
+                this.logo.setTexture('mostlyclosed');
             });
-    
             this.logo.on('pointerout', () => {
                 this.input.manager.canvas.style.cursor = 'default';
                 this.logo.setTexture('closed');
             });
-    
             return;
         }
     
         this.showInitialImages(() => {
             const background = this.add.image(512, 384, 'background');
             background.setAlpha(0);
-            this.logo = this.add.image(712, 495, 'logo').setDepth(100).setScale(0.75);
+            this.logo = this.add.image(712, 495, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
     
-            this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75, 'Home', 'first-donut');
-            this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75, 'Projects', 'second-donut');
-            this.createInteractiveZone(this.logo.x + 250, this.logo.y + 200, 75, 'About', 'third-donut');
-            this.createInteractiveZone(this.logo.x + 100, this.logo.y + 300, 75, 'Contact', 'fourth-donut');
-            this.createInteractiveZone(this.logo.x + 250, this.logo.y + 300, 75, 'Art', 'fifth-donut');
-            this.createInteractiveZone(this.logo.x + 400, this.logo.y + 300, 75, 'Blog', 'sixth-donut');
+            this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75 * scaleFactor, 'Home', 'first-donut');
+            this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75 * scaleFactor, 'Projects', 'second-donut');
+            this.createInteractiveZone(this.logo.x + 250, this.logo.y + 200, 75 * scaleFactor, 'About', 'third-donut');
+            this.createInteractiveZone(this.logo.x + 100, this.logo.y + 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
+            this.createInteractiveZone(this.logo.x + 250, this.logo.y + 300, 75 * scaleFactor, 'Blog', 'fifth-donut');
+            this.createInteractiveZone(this.logo.x + 400, this.logo.y + 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
     
-            this.createLink(this.logo.x - 190, this.logo.y + 130, 'Home', 'first-donut');
-            this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut');
-            this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut');
-            this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut');
-            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Art', 'fifth-donut'); 
-            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut'); 
+            this.createLink(this.logo.x - 190, this.logo.y + 130, 'Home', 'first-donut', scaleFactor);
+            this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut', scaleFactor);
+            this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut', scaleFactor);
+            this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut', scaleFactor);
+            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Blog', 'fifth-donut', scaleFactor);
+            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut', scaleFactor);
     
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
-
     }
 
-    createSlidingDonuts() {
-        const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut', 'choco-donut'];
-        const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Art', 'Blog'];
-    
-        const donuts = [];
-        const linkTexts = [];
-        let hideDonutsTimer; // Timer for hiding donuts after pointer out
-        let menuStaysOut = false; // Flag to keep the menu out when the box is clicked
-    
-        const initialYPosition = 100;
-    
-        for (let i = 0; i < donutImages.length; i++) {
-            const initialXPosition = 200 + (i * 150); 
-    
-            const donut = this.add.image(initialXPosition, initialYPosition, donutImages[i])
-                .setDepth(101)
-                .setScale(0.25)
-                .setAlpha(0)
-                .setInteractive()
-                .setName(donutLinks[i]);
+   createSlidingDonuts(scaleFactor) {
+    const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut'];
+    const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Blog'];
 
-    
-            const linkText = this.add.text(initialXPosition, initialYPosition + 70, donutLinks[i], {   fontSize:25,
-                fontFamily: 'Cedarville Cursive',
-                className: 'cedarville-cursive-regular',fill: '#a94064' })
-                .setOrigin(0.5)
-                .setDepth(102)
-                .setAlpha(0)
-                .setInteractive();
-    
-            donut.on('pointerover', () => {
-                clearTimeout(hideDonutsTimer);
-                this.input.manager.canvas.style.cursor = 'pointer';
-                this.highlightLink(donutLinks[i], true);
-    
-                this.tweens.add({
-                    targets: donut,
-                    scale: 0.4,
-                    duration: 200,
-                    ease: 'Power2'
-                });
-    
-                this.tweens.add({
-                    targets: linkText,
-                    scale: 1.2, 
-                    duration: 200,
-                    ease: 'Power2'
-                });
-            });
-    
-            donut.on('pointerout', () => {
-                this.input.manager.canvas.style.cursor = 'default';
-                this.highlightLink(donutLinks[i], false);
-    
-                this.tweens.add({
-                    targets: donut,
-                    scale: 0.3,
-                    duration: 200,
-                    ease: 'Power2'
-                });
-    
-                this.tweens.add({
-                    targets: linkText,
-                    scale: 1, 
-                    duration: 200,
-                    ease: 'Power2'
-                });
-    
-                if (!menuStaysOut) {
-                    hideDonutsTimer = setTimeout(() => {
-                        this.hideDonuts(donuts, linkTexts);
-                    }, 1500);
-                }
-            });
-    
-            linkText.on('pointerdown', () => {
-                const url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
-                window.location.href = url;
-            });
-    
-            donut.on('pointerdown', () => {
-                let url;
-                if (donutLinks[i] === 'Blog') {
-                    url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
-                } else {
-                    url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
-                }
-                window.location.href = url;
-            });
-    
-            donuts.push(donut);
-            linkTexts.push(linkText);
-        }
-    
-        this.logo.setInteractive();
-    
-        this.logo.on('pointerover', () => {
-            clearTimeout(hideDonutsTimer); // Clear the hide timer if pointer re-enters
+    const donuts = [];
+    const linkTexts = [];
+    let hideDonutsTimer;
+    let menuStaysOut = false;
+
+    const initialYPosition = 100 * scaleFactor;
+    const spacing = 5; 
+
+    const baseXPosition = 512 - ((donutImages.length - 1) * spacing / 2);
+
+    for (let i = 0; i < donutImages.length; i++) {
+        const initialXPosition = baseXPosition + (i * spacing);
+
+        const donut = this.add.image(initialXPosition, initialYPosition, donutImages[i])
+            .setDepth(101)
+            .setScale(0.3 * scaleFactor)
+            .setAlpha(0)
+            .setInteractive({ useHandCursor: true })
+            .setName(donutLinks[i]);
+
+        donut.setInteractive(new Phaser.Geom.Circle(donut.width / 2, donut.height / 2, donut.width / 2), Phaser.Geom.Circle.Contains);
+
+        const linkText = this.add.text(initialXPosition, initialYPosition + 70 * scaleFactor, donutLinks[i], {
+            fontSize: 25 * scaleFactor,
+            fontFamily: 'Cedarville Cursive',
+            className: 'cedarville-cursive-regular',
+            fill: '#a94064'
+        }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
+
+        linkText.setInteractive(new Phaser.Geom.Rectangle(0, 0, linkText.width, linkText.height), Phaser.Geom.Rectangle.Contains);
+
+        donut.on('pointerover', () => {
+            clearTimeout(hideDonutsTimer);
             this.input.manager.canvas.style.cursor = 'pointer';
-            if (!menuStaysOut) {
-                this.showDonuts(donuts, linkTexts);
-            }
+            this.highlightLink(donutLinks[i], true);
+
+            this.tweens.add({
+                targets: donut,
+                scale: 0.4 * scaleFactor,
+                duration: 200,
+                ease: 'Power2'
+            });
+
+            this.tweens.add({
+                targets: linkText,
+                scale: 1.2 * scaleFactor,
+                duration: 200,
+                ease: 'Power2'
+            });
         });
-    
-        this.logo.on('pointerout', () => {
+
+        donut.on('pointerout', () => {
             this.input.manager.canvas.style.cursor = 'default';
-    
+            this.highlightLink(donutLinks[i], false);
+
+            this.tweens.add({
+                targets: donut,
+                scale: 0.3 * scaleFactor,
+                duration: 200,
+                ease: 'Power2'
+            });
+
+            this.tweens.add({
+                targets: linkText,
+                scale: 1 * scaleFactor,
+                duration: 200,
+                ease: 'Power2'
+            });
+
             if (!menuStaysOut) {
                 hideDonutsTimer = setTimeout(() => {
                     this.hideDonuts(donuts, linkTexts);
                 }, 1500);
             }
         });
-    
-        this.logo.on('pointerdown', () => {
-            if (menuStaysOut) {
-                // If the menu is out, clicking will hide the donuts
-                this.hideDonuts(donuts, linkTexts);
-                menuStaysOut = false; // Set the state to false so the next click or hover shows the donuts
+
+        donut.on('pointerdown', () => {
+            let url;
+            if (donutLinks[i] === 'Blog') {
+                url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
             } else {
-                // If the menu is not out, clicking will keep the donuts visible
-                clearTimeout(hideDonutsTimer); // Prevent hiding when the box is clicked
-                this.showDonuts(donuts, linkTexts); // Ensure donuts are shown
-                menuStaysOut = true; // Set the state to true to keep the donuts out
+                url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
             }
+            window.location.href = url;
+        });
+
+        donuts.push(donut);
+        linkTexts.push(linkText);
+    }
+
+    this.logo.setInteractive();
+
+    this.logo.on('pointerover', () => {
+        clearTimeout(hideDonutsTimer); // Clear the hide timer if pointer re-enters
+        this.input.manager.canvas.style.cursor = 'pointer';
+        if (!menuStaysOut) {
+            this.showDonuts(donuts, linkTexts);
+        }
+    });
+
+    this.logo.on('pointerout', () => {
+        this.input.manager.canvas.style.cursor = 'default';
+
+        if (!menuStaysOut) {
+            hideDonutsTimer = setTimeout(() => {
+                this.hideDonuts(donuts, linkTexts);
+            }, 1500);
+        }
+    });
+
+    this.logo.on('pointerdown', () => {
+        if (menuStaysOut) {
+            this.hideDonuts(donuts, linkTexts);
+            menuStaysOut = false;
+        } else {
+            clearTimeout(hideDonutsTimer);
+            this.showDonuts(donuts, linkTexts);
+            menuStaysOut = true;
+        }
+    });
+}
+
+
+    
+showDonuts(donuts, linkTexts) {
+    for (let i = 0; i < donuts.length; i++) {
+        let xPosition;
+
+        const donutScale = donuts[i].scaleX;
+
+        if (donutScale < 0.2) {
+            xPosition = 350 + (i * 50); 
+        } else {
+            xPosition = 350 + (i * 125); 
+        }
+
+        this.tweens.add({
+            targets: donuts[i],
+            x: xPosition,
+            alpha: 1,
+            duration: 500,
+            ease: 'Power2'
+        });
+
+        this.tweens.add({
+            targets: linkTexts[i],
+            x: xPosition,
+            alpha: 1,
+            duration: 500,
+            ease: 'Power2'
         });
     }
-    
-    showDonuts(donuts, linkTexts) {
-        for (let i = 0; i < donuts.length; i++) {
-            this.tweens.add({
-                targets: donuts[i],
-                x: 350 + (i * 150),
-                alpha: 1,
-                duration: 500,
-                ease: 'Power2'
-            });
-    
-            this.tweens.add({
-                targets: linkTexts[i],
-                x: 350 + (i * 150),
-                alpha: 1,
-                duration: 500,
-                ease: 'Power2'
-            });
+}
+
+hideDonuts(donuts, linkTexts) {
+    for (let i = 0; i < donuts.length; i++) {
+        let xPosition;
+
+        const donutScale = donuts[i].scaleX;
+
+        if (donutScale < 0.3) {
+            xPosition = 200 + (i * 50);
+        } else {
+            xPosition = 200 + (i * 150);
         }
+
+        this.tweens.add({
+            targets: donuts[i],
+            x: xPosition,
+            alpha: 0,
+            duration: 500,
+            ease: 'Power2'
+        });
+
+        this.tweens.add({
+            targets: linkTexts[i],
+            x: xPosition,
+            alpha: 0,
+            duration: 500,
+            ease: 'Power2'
+        });
     }
-    
-    hideDonuts(donuts, linkTexts) {
-        for (let i = 0; i < donuts.length; i++) {
-            this.tweens.add({
-                targets: donuts[i],
-                x: 200 + (i * 150),
-                alpha: 0,
-                duration: 500,
-                ease: 'Power2'
-            });
-    
-            this.tweens.add({
-                targets: linkTexts[i],
-                x: 200 + (i * 150),
-                alpha: 0,
-                duration: 500,
-                ease: 'Power2'
-            });
-        }
-    }
-    
-    
-    
+}
+
     
     showInitialImages(callback) {
         const background = this.add.image(512, 384, 'background');
@@ -360,8 +373,8 @@ export class MainMenu extends Scene {
     createLink(x, y, label, imageName) {
         const linkText = this.add.text(x, y, label, {
             fontSize:25,
-            fontFamily: 'Cedarville Cursive', // Apply the font directly if loaded via CSS
-            className: 'cedarville-cursive-regular', // Apply the class name
+            fontFamily: 'Cedarville Cursive',
+            className: 'cedarville-cursive-regular',
         }).setOrigin(0.5).setDepth(101).setInteractive();
         
         linkText.on('pointerover', () => {

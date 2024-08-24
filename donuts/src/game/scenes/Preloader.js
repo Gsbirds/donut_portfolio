@@ -26,6 +26,7 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
         this.load.setPath('assets');
 
         this.load.image('logo', 'donutbox.png');

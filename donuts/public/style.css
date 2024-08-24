@@ -98,13 +98,46 @@ body {
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   margin-top: 200px;
   text-align: left;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+#contact {
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 30px;
+  background-color: #8d5f74;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 200px;
+  color: #fff;
+  width: 800px;
+  font-family: 'IBM Plex Mono', monospace;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+#contact:hover {
+  transform: rotate(2.5deg);
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 30px;
+  background-color: #8d5f74;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+#contact a {
+  color: black;
+}
+
+
 @media (max-width: 768px) {
-  .blackbox, .introbox, #projects img  {
+  .blackbox, .introbox, #projects img, #contact  {
     font-size: medium;
     padding: 0.75rem;
     width:400px;
+
   }
 
   .worked {
@@ -123,7 +156,6 @@ body {
     font-size: small;
     padding: 0.5rem;
     width:300px;
-
   }
 
     .worked {
@@ -194,34 +226,6 @@ footer ul {
   text-align: left;
 }
 
-#contact {
-  padding-left: 1rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-radius: 30px;
-  background-color: #8d5f74;
-  margin-right: auto;
-  margin-left: auto;
-  margin-top: 200px;
-  color: #fff;
-  width: 800px;
-  font-family: 'IBM Plex Mono', monospace;
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-}
-
-#contact:hover {
-  transform: rotate(2.5deg);
-  padding-left: 1rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-radius: 30px;
-  background-color: #8d5f74;
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-}
-
-#contact a {
-  color: black;
-}
 
 .contact_btn {
   outline: none;
@@ -258,6 +262,12 @@ footer ul {
 }
 
 
+
+.projects-padding{
+  padding-top: 8rem;
+}
+
+
 #game-container {
   position: fixed;
   top: 13%;
@@ -266,8 +276,21 @@ footer ul {
   padding-top: 2rem;
 }
 
+@media (max-width: 1200px) {
+  #game-container {
+    width: 80%; 
+    top: 10%;
+    left: 50%; 
+    right: 70%;
+  }
+}
 
+@media (max-width: 600px) {
+  #game-container {
+    /* width: 60%; */
+    top: 15%;
+    left: 30%; 
+    right: 90%; 
 
-.projects-padding{
-  padding-top: 8rem;
+  }
 }
