@@ -76,9 +76,9 @@ body {
 .blackbox {
   width: 100%;
   padding: 1rem;
-  color: white;
+  color: black;
   font-family: 'IBM Plex Mono', monospace;
-  background-color: #8d5f74;
+  background-color: #FFD1DC;
   font-size: large;
   line-height: 1.17;
   border-radius: 25px;
@@ -89,9 +89,9 @@ body {
 .introbox {
   width: 100%;
   padding: 1rem;
-  color: white;
+  color: black;
   font-family: 'IBM Plex Mono', monospace;
-  background-color: #8d5f74;
+  background-color: #FFD1DC;
   font-size: large;
   line-height: 1.17;
   border-radius: 25px;
@@ -165,7 +165,7 @@ body {
 }
 
 #projects img:hover {
-  background-color: #e79fa8;
+  background-color: #FFD1DC;
   transition: .30s ease-in-out;
 }
 

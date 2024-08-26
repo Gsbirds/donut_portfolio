@@ -117,16 +117,14 @@ export class MainMenu extends Scene {
             this.donuts.push(donut);
             this.linkTexts.push(linkText);
         }
-    
-        // Automatically open the donuts in the correct orientation
-        this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
-    
+        
         this.logo.setInteractive();
     
         this.logo.on('pointerover', () => {
             clearTimeout(hideDonutsTimer);
             this.input.manager.canvas.style.cursor = 'pointer';
             if (!menuStaysOut) {
+                const isSmallScreen = window.innerWidth <= 768;
                 this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
             }
         });
@@ -135,21 +133,28 @@ export class MainMenu extends Scene {
             this.input.manager.canvas.style.cursor = 'default';
             if (!menuStaysOut) {
                 hideDonutsTimer = setTimeout(() => {
+                    const isSmallScreen = window.innerWidth <= 768;
                     this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 }, 1500);
             }
         });
     
         this.logo.on('pointerdown', () => {
+            const isSmallScreen = window.innerWidth <= 768;
             if (menuStaysOut) {
+                this.resizeHandler();
+
                 this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 menuStaysOut = false;
             } else {
+                this.resizeHandler();
+
                 clearTimeout(hideDonutsTimer);
                 this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 menuStaysOut = true;
             }
         });
+        
     }
     
     calculateScaleFactor() {
@@ -185,6 +190,7 @@ export class MainMenu extends Scene {
     }
     
     
+    
     calculateDonutPosition(i, scaleFactor, isSmallScreen) {
         const xPosition = isSmallScreen ? 100 : 250 + (i * 125);
         const yPosition = isSmallScreen ? 150 + (i * 100 * scaleFactor) : 100 * scaleFactor;
@@ -195,7 +201,7 @@ export class MainMenu extends Scene {
     showDonuts(donuts, linkTexts, isSmallScreen) {
         for (let i = 0; i < donuts.length; i++) {
             const position = this.calculateDonutPosition(i, 1, isSmallScreen);
-
+    
             this.tweens.add({
                 targets: donuts[i],
                 x: position.x,
@@ -204,7 +210,7 @@ export class MainMenu extends Scene {
                 duration: 500,
                 ease: 'Power2'
             });
-
+    
             this.tweens.add({
                 targets: linkTexts[i],
                 x: position.x,
@@ -215,19 +221,11 @@ export class MainMenu extends Scene {
             });
         }
     }
-
-    hideDonuts(donuts, linkTexts) {
+    
+    hideDonuts(donuts, linkTexts, isSmallScreen) {
         for (let i = 0; i < donuts.length; i++) {
-            let xPosition;
-
-            const donutScale = donuts[i].scaleX;
-
-            if (donutScale < 0.3) {
-                xPosition = 200 + (i * 50);
-            } else {
-                xPosition = 200 + (i * 150);
-            }
-
+            let xPosition = isSmallScreen ? 100 : 250 + (i * 125);
+    
             this.tweens.add({
                 targets: donuts[i],
                 x: xPosition,
@@ -235,7 +233,7 @@ export class MainMenu extends Scene {
                 duration: 500,
                 ease: 'Power2'
             });
-
+    
             this.tweens.add({
                 targets: linkTexts[i],
                 x: xPosition,
@@ -245,6 +243,8 @@ export class MainMenu extends Scene {
             });
         }
     }
+    
+    
 
     
     showInitialImages(callback) {
