@@ -19,6 +19,9 @@ export class MainMenu extends Scene {
             this.logo = this.add.image(100, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
             this.createSlidingDonuts(scaleFactor);
             this.logo.setInteractive();
+            window.addEventListener('resize', () => {
+                this.resizeHandler();
+            });
             this.logo.on('pointerover', () => {
                 this.input.manager.canvas.style.cursor = 'pointer';
                 this.logo.setTexture('mostlyclosed');
@@ -52,195 +55,196 @@ export class MainMenu extends Scene {
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
+   
     }
 
-   createSlidingDonuts(scaleFactor) {
-    const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut'];
-    const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Blog'];
-
-    const donuts = [];
-    const linkTexts = [];
-    let hideDonutsTimer;
-    let menuStaysOut = false;
-
-    const initialYPosition = 100 * scaleFactor;
-    const spacing = 5; 
-
-    const baseXPosition = 512 - ((donutImages.length - 1) * spacing / 2);
-
-    for (let i = 0; i < donutImages.length; i++) {
-        const initialXPosition = baseXPosition + (i * spacing);
-
-        const donut = this.add.image(initialXPosition, initialYPosition, donutImages[i])
-            .setDepth(101)
-            .setScale(0.3 * scaleFactor)
-            .setAlpha(0)
-            .setInteractive({ useHandCursor: true })
-            .setName(donutLinks[i]);
-
-        donut.setInteractive(new Phaser.Geom.Circle(donut.width / 2, donut.height / 2, donut.width / 2), Phaser.Geom.Circle.Contains);
-
-        const linkText = this.add.text(initialXPosition, initialYPosition + 70 * scaleFactor, donutLinks[i], {
-            fontSize: 25 * scaleFactor,
-            fontFamily: 'Cedarville Cursive',
-            className: 'cedarville-cursive-regular',
-            fill: '#a94064'
-        }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
-
-        linkText.setInteractive(new Phaser.Geom.Rectangle(0, 0, linkText.width, linkText.height), Phaser.Geom.Rectangle.Contains);
-
-        donut.on('pointerover', () => {
+   
+    createSlidingDonuts(scaleFactor) {
+        const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut'];
+        const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Blog'];
+    
+        this.donuts = [];
+        this.linkTexts = [];
+        let hideDonutsTimer;
+        let menuStaysOut = false;
+    
+        const isSmallScreen = window.innerWidth <= 768;
+    
+        for (let i = 0; i < donutImages.length; i++) {
+            const position = this.calculateDonutPosition(i, scaleFactor, isSmallScreen);
+    
+            const donut = this.add.image(position.x, position.y, donutImages[i])
+                .setDepth(101)
+                .setScale(0.3 * scaleFactor)
+                .setAlpha(0)
+                .setInteractive({ useHandCursor: true })
+                .setName(donutLinks[i]);
+    
+            const linkText = this.add.text(position.x, position.y + 70 * scaleFactor, donutLinks[i], {
+                fontSize: 25 * scaleFactor,
+                fontFamily: 'Cedarville Cursive',
+                className: 'cedarville-cursive-regular',
+                fill: '#a94064'
+            }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
+    
+            donut.on('pointerover', () => {
+                clearTimeout(hideDonutsTimer);
+                this.input.manager.canvas.style.cursor = 'pointer';
+                this.highlightLink(donutLinks[i], true);
+            });
+    
+            donut.on('pointerout', () => {
+                this.input.manager.canvas.style.cursor = 'default';
+                this.highlightLink(donutLinks[i], false);
+    
+                if (!menuStaysOut) {
+                    hideDonutsTimer = setTimeout(() => {
+                        this.hideDonuts(this.donuts, this.linkTexts);
+                    }, 1500);
+                }
+            });
+    
+            donut.on('pointerdown', () => {
+                let url;
+                if (donutLinks[i] === 'Blog') {
+                    url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+                } else {
+                    url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                }
+                window.location.href = url;
+            });
+    
+            this.donuts.push(donut);
+            this.linkTexts.push(linkText);
+        }
+    
+        // Automatically open the donuts in the correct orientation
+        this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
+    
+        this.logo.setInteractive();
+    
+        this.logo.on('pointerover', () => {
             clearTimeout(hideDonutsTimer);
             this.input.manager.canvas.style.cursor = 'pointer';
-            this.highlightLink(donutLinks[i], true);
-
-            this.tweens.add({
-                targets: donut,
-                scale: 0.4 * scaleFactor,
-                duration: 200,
-                ease: 'Power2'
-            });
-
-            this.tweens.add({
-                targets: linkText,
-                scale: 1.2 * scaleFactor,
-                duration: 200,
-                ease: 'Power2'
-            });
+            if (!menuStaysOut) {
+                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
+            }
         });
-
-        donut.on('pointerout', () => {
+    
+        this.logo.on('pointerout', () => {
             this.input.manager.canvas.style.cursor = 'default';
-            this.highlightLink(donutLinks[i], false);
-
-            this.tweens.add({
-                targets: donut,
-                scale: 0.3 * scaleFactor,
-                duration: 200,
-                ease: 'Power2'
-            });
-
-            this.tweens.add({
-                targets: linkText,
-                scale: 1 * scaleFactor,
-                duration: 200,
-                ease: 'Power2'
-            });
-
             if (!menuStaysOut) {
                 hideDonutsTimer = setTimeout(() => {
-                    this.hideDonuts(donuts, linkTexts);
+                    this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 }, 1500);
             }
         });
-
-        donut.on('pointerdown', () => {
-            let url;
-            if (donutLinks[i] === 'Blog') {
-                url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+    
+        this.logo.on('pointerdown', () => {
+            if (menuStaysOut) {
+                this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
+                menuStaysOut = false;
             } else {
-                url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                clearTimeout(hideDonutsTimer);
+                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
+                menuStaysOut = true;
             }
-            window.location.href = url;
         });
-
-        donuts.push(donut);
-        linkTexts.push(linkText);
+    }
+    
+    calculateScaleFactor() {
+        return Math.min(window.innerWidth / 1520, window.innerHeight / 680);
     }
 
-    this.logo.setInteractive();
-
-    this.logo.on('pointerover', () => {
-        clearTimeout(hideDonutsTimer); // Clear the hide timer if pointer re-enters
-        this.input.manager.canvas.style.cursor = 'pointer';
-        if (!menuStaysOut) {
-            this.showDonuts(donuts, linkTexts);
+    resizeHandler() {
+        this.scaleFactor = this.calculateScaleFactor();
+        
+        if (this.logo) {
+            this.logo.setScale(0.3 * this.scaleFactor);
         }
-    });
-
-    this.logo.on('pointerout', () => {
-        this.input.manager.canvas.style.cursor = 'default';
-
-        if (!menuStaysOut) {
-            hideDonutsTimer = setTimeout(() => {
-                this.hideDonuts(donuts, linkTexts);
-            }, 1500);
+    
+        if (this.donuts && this.donuts.length > 0) {
+            const isSmallScreen = window.innerWidth <= 768;
+    
+            for (let i = 0; i < this.donuts.length; i++) {
+                const position = this.calculateDonutPosition(i, this.scaleFactor, isSmallScreen);
+    
+                this.donuts[i].setScale(0.3 * this.scaleFactor);
+                this.donuts[i].setPosition(position.x, position.y);
+    
+                if (this.linkTexts[i]) {
+                    this.linkTexts[i].setFontSize(25 * this.scaleFactor);
+                    this.linkTexts[i].setPosition(position.x, position.y + 70 * this.scaleFactor);
+                }
+            }
+    
+            if (this.donuts[0].alpha > 0) { 
+                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
+            }
         }
-    });
-
-    this.logo.on('pointerdown', () => {
-        if (menuStaysOut) {
-            this.hideDonuts(donuts, linkTexts);
-            menuStaysOut = false;
-        } else {
-            clearTimeout(hideDonutsTimer);
-            this.showDonuts(donuts, linkTexts);
-            menuStaysOut = true;
-        }
-    });
-}
-
+    }
+    
+    
+    calculateDonutPosition(i, scaleFactor, isSmallScreen) {
+        const xPosition = isSmallScreen ? 100 : 250 + (i * 125);
+        const yPosition = isSmallScreen ? 150 + (i * 100 * scaleFactor) : 100 * scaleFactor;
+        return { x: xPosition, y: yPosition };
+    }
 
     
-showDonuts(donuts, linkTexts) {
-    for (let i = 0; i < donuts.length; i++) {
-        let xPosition;
+    showDonuts(donuts, linkTexts, isSmallScreen) {
+        for (let i = 0; i < donuts.length; i++) {
+            const position = this.calculateDonutPosition(i, 1, isSmallScreen);
 
-        const donutScale = donuts[i].scaleX;
+            this.tweens.add({
+                targets: donuts[i],
+                x: position.x,
+                y: position.y,
+                alpha: 1,
+                duration: 500,
+                ease: 'Power2'
+            });
 
-        if (donutScale < 0.2) {
-            xPosition = 350 + (i * 50); 
-        } else {
-            xPosition = 350 + (i * 125); 
+            this.tweens.add({
+                targets: linkTexts[i],
+                x: position.x,
+                y: position.y + 70,
+                alpha: 1,
+                duration: 500,
+                ease: 'Power2'
+            });
         }
-
-        this.tweens.add({
-            targets: donuts[i],
-            x: xPosition,
-            alpha: 1,
-            duration: 500,
-            ease: 'Power2'
-        });
-
-        this.tweens.add({
-            targets: linkTexts[i],
-            x: xPosition,
-            alpha: 1,
-            duration: 500,
-            ease: 'Power2'
-        });
     }
-}
 
-hideDonuts(donuts, linkTexts) {
-    for (let i = 0; i < donuts.length; i++) {
-        let xPosition;
+    hideDonuts(donuts, linkTexts) {
+        for (let i = 0; i < donuts.length; i++) {
+            let xPosition;
 
-        const donutScale = donuts[i].scaleX;
+            const donutScale = donuts[i].scaleX;
 
-        if (donutScale < 0.3) {
-            xPosition = 200 + (i * 50);
-        } else {
-            xPosition = 200 + (i * 150);
+            if (donutScale < 0.3) {
+                xPosition = 200 + (i * 50);
+            } else {
+                xPosition = 200 + (i * 150);
+            }
+
+            this.tweens.add({
+                targets: donuts[i],
+                x: xPosition,
+                alpha: 0,
+                duration: 500,
+                ease: 'Power2'
+            });
+
+            this.tweens.add({
+                targets: linkTexts[i],
+                x: xPosition,
+                alpha: 0,
+                duration: 500,
+                ease: 'Power2'
+            });
         }
-
-        this.tweens.add({
-            targets: donuts[i],
-            x: xPosition,
-            alpha: 0,
-            duration: 500,
-            ease: 'Power2'
-        });
-
-        this.tweens.add({
-            targets: linkTexts[i],
-            x: xPosition,
-            alpha: 0,
-            duration: 500,
-            ease: 'Power2'
-        });
     }
-}
 
     
     showInitialImages(callback) {
