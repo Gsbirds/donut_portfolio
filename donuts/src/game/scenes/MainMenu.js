@@ -178,7 +178,7 @@ export class MainMenu extends Scene {
                 }
             }
     
-            if (this.donuts[0].alpha > 0) { 
+            if (this.donuts[0].alpha > 0) { // Check if donuts are already visible
                 this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
             }
         }
