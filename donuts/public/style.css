@@ -12,6 +12,7 @@ body {
   align-items: center;
   min-height: 100vh;
   padding-bottom: 20px;
+  background-position: center center;
 }
 
 #app {
@@ -317,3 +318,5 @@ footer ul {
   }
 
 }
+
+

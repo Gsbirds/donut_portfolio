@@ -374,13 +374,13 @@ export class MainMenu extends Scene {
 
     }
 
-    createLink(x, y, label, imageName) {
+    createLink(x, y, label, imageName, scaleFactor) {
         const linkText = this.add.text(x, y, label, {
-            fontSize:25,
+            fontSize: 25 * scaleFactor,
             fontFamily: 'Cedarville Cursive',
             className: 'cedarville-cursive-regular',
         }).setOrigin(0.5).setDepth(101).setInteractive();
-        
+    
         linkText.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
             linkText.setStyle({ fill: '#fc5c85' });
@@ -401,12 +401,14 @@ export class MainMenu extends Scene {
                 spriteName = 'choco-donut';
             }
     
+            this.linkTexts.forEach(text => text.destroy());
+    
             if (this.logo) {
                 this.logo.destroy();
             }
     
             this.logo = this.add.image(512, 300, imageName).setDepth(200).setScale(0.75);
-            
+    
             this.addSprite(spriteName);
     
             this.reverseImages(() => {
@@ -430,9 +432,13 @@ export class MainMenu extends Scene {
             });
         });
     
+        this.linkTexts = this.linkTexts || [];
+        this.linkTexts.push(linkText);
+    
         this.links = this.links || {};
         this.links[label] = linkText;
     }
+    
     
 
     highlightLink(label, highlight) {
