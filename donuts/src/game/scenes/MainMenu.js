@@ -32,12 +32,16 @@ export class MainMenu extends Scene {
             });
             return;
         }
-    
+
         this.showInitialImages(() => {
-            const background = this.add.image(512, 384, 'background');
-            background.setAlpha(0);
-            this.logo = this.add.image(712, 495, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
-    
+        const background = this.add.image(512, 384, 'background');
+        background.setAlpha(0);
+
+        const logoX = 412 * scaleFactor; 
+        const logoY = 484 * scaleFactor;
+
+        this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
+
             this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75 * scaleFactor, 'Home', 'first-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75 * scaleFactor, 'Projects', 'second-donut');
             this.createInteractiveZone(this.logo.x + 250, this.logo.y + 200, 75 * scaleFactor, 'About', 'third-donut');
@@ -56,6 +60,27 @@ export class MainMenu extends Scene {
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
    
+    }
+
+    resizeLargeDonutBox() {
+        const scaleFactor = this.calculateScaleFactor();
+
+        if (this.logo) {
+            const logoX = 512 * scaleFactor;
+            const logoY = 384 * scaleFactor;
+
+            this.logo.setScale(0.75 * scaleFactor);
+            this.logo.setPosition(logoX, logoY);
+        }
+
+        if (this.links) {
+            this.links['Home'].setPosition(logoX - 190 * scaleFactor, logoY + 130 * scaleFactor);
+            this.links['Projects'].setPosition(logoX - 20 * scaleFactor, logoY + 70 * scaleFactor);
+            this.links['About'].setPosition(logoX + 160 * scaleFactor, logoY + 20 * scaleFactor);
+            this.links['Contact'].setPosition(logoX + 100 * scaleFactor, logoY + 350 * scaleFactor);
+            this.links['Blog'].setPosition(logoX + 250 * scaleFactor, logoY + 300 * scaleFactor);
+            this.links['Blog'].setPosition(logoX + 400 * scaleFactor, logoY + 240 * scaleFactor);
+        }
     }
 
    
@@ -165,7 +190,7 @@ export class MainMenu extends Scene {
         this.scaleFactor = this.calculateScaleFactor();
         
         if (this.logo) {
-            this.logo.setScale(0.3 * this.scaleFactor);
+            this.logo.setScale(0.4 * this.scaleFactor);
         }
     
         if (this.donuts && this.donuts.length > 0) {
@@ -183,7 +208,7 @@ export class MainMenu extends Scene {
                 }
             }
     
-            if (this.donuts[0].alpha > 0) { // Check if donuts are already visible
+            if (this.donuts[0].alpha > 0) {
                 this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
             }
         }
@@ -243,7 +268,6 @@ export class MainMenu extends Scene {
             });
         }
     }
-    
     
 
     

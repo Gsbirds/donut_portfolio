@@ -90,7 +90,7 @@ function Projects() {
                                 <li className="tech2">Python, Javascript, React, Starlette</li>
                             </ul>
                         </div>
-                        <img src="assets/blog2.png" className="d-block" alt="..." />
+                        <img src="assets/blog.png" className="d-block" alt="..." />
                     </article>
                 </section>
             </section>
