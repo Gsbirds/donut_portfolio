@@ -37,8 +37,8 @@ export class MainMenu extends Scene {
         const background = this.add.image(512, 384, 'background');
         background.setAlpha(0);
 
-        const logoX = 412 * scaleFactor; 
-        const logoY = 484 * scaleFactor;
+        const logoX = window.innerWidth / 2;
+        const logoY = window.innerHeight / 2;
 
         this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
 
@@ -105,8 +105,8 @@ export class MainMenu extends Scene {
                 .setInteractive({ useHandCursor: true })
                 .setName(donutLinks[i]);
     
-            const linkText = this.add.text(position.x, position.y + 70 * scaleFactor, donutLinks[i], {
-                fontSize: 25 * scaleFactor,
+            const linkText = this.add.text(position.x, position.y, donutLinks[i], {
+                fontSize: 25,
                 fontFamily: 'Cedarville Cursive',
                 className: 'cedarville-cursive-regular',
                 fill: '#a94064'
