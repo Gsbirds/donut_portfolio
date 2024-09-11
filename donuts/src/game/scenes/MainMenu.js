@@ -172,7 +172,7 @@ export class MainMenu extends Scene {
     
     
     calculateScaleFactor() {
-        return Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        return Math.min(window.innerWidth / 1520, window.innerHeight / 680);
     }
 
     resizeHandler() {
@@ -384,16 +384,23 @@ export class MainMenu extends Scene {
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
-                        const url = `${window.location.origin}/${name.toLowerCase()}`;
+                        let url=''
+                        if (name=='Blog'){
+                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';  
+                        } else {
+                            url = `${window.location.origin}/${name.toLowerCase()}`;
+                        }
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
                     }
+                    
                 });
             });
 
         });
 
     }
+
 
     createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor) {
         const linkText = this.add.text(
