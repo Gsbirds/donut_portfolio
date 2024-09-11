@@ -8,20 +8,15 @@ export class MainMenu extends Scene {
 
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
-    
-        const maxLogoWidth = 150; 
-        const maxLogoHeight = 150;
+
         if (window.location.pathname === '/home') {
         localStorage.removeItem('donutClicked');
-        }
-        if (window.location.pathname === '/home') {
-            localStorage.removeItem('donutClicked');
         }
     
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
     
         if (isDonutClicked) {
-            this.logo = this.add.image(100, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
+            this.logo = this.add.image(120, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
             this.createSlidingDonuts(scaleFactor);
             this.logo.setInteractive();
             window.addEventListener('resize', () => {
@@ -47,17 +42,17 @@ export class MainMenu extends Scene {
 
         this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
 
-            this.createInteractiveZone(this.logo.x - 50, this.logo.y + 200, 75 * scaleFactor, 'Home', 'first-donut');
-            this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75 * scaleFactor, 'Projects', 'second-donut');
-            this.createInteractiveZone(this.logo.x + 250, this.logo.y + 200, 75 * scaleFactor, 'About', 'third-donut');
-            this.createInteractiveZone(this.logo.x + 100, this.logo.y + 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
-            this.createInteractiveZone(this.logo.x + 400, this.logo.y + 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
+        this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scaleFactor, 'Home', 'first-donut');
+        this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scaleFactor, 'Projects', 'second-donut');
+        this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scaleFactor, 'About', 'third-donut');
+        this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
+        this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
     
-            this.createLink(this.logo.x - 190, this.logo.y + 130, 'Home', 'first-donut', scaleFactor);
-            this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut', scaleFactor);
-            this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut', scaleFactor);
-            this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut', scaleFactor);
-            this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut', scaleFactor);
+        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor);
+        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor);
+        this.createLinkRelativeToLogo(160, 20, 'About', 'third-donut', scaleFactor);
+        this.createLinkRelativeToLogo(100, 350, 'Contact', 'fourth-donut', scaleFactor);
+        this.createLinkRelativeToLogo(400, 240, 'Blog', 'sixth-donut', scaleFactor);
     
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
@@ -85,11 +80,11 @@ export class MainMenu extends Scene {
     
             const donut = this.add.image(position.x, position.y, donutImages[i]).setDepth(101);
     
-            const donutWidth = donut.width * 0.3 * scaleFactor;
-            const donutHeight = donut.height * 0.3 * scaleFactor;
+            const donutWidth = donut.width * 0.4 * scaleFactor;
+            const donutHeight = donut.height * 0.4 * scaleFactor;
     
             const adjustedDonutScaleFactor = Math.min(
-                0.3 * scaleFactor,
+                0.4 * scaleFactor,
                 maxDonutWidth / donut.width,
                 maxDonutHeight / donut.height
             );
@@ -185,14 +180,14 @@ export class MainMenu extends Scene {
         
         if (this.logo) {
             this.logo.setScale(0.4 * this.scaleFactor);
-                    if (this.links) {
-            this.links['Home'].setPosition(logoX - 190 * scaleFactor, logoY + 130 * scaleFactor);
-            this.links['Projects'].setPosition(logoX - 20 * scaleFactor, logoY + 70 * scaleFactor);
-            this.links['About'].setPosition(logoX + 160 * scaleFactor, logoY + 20 * scaleFactor);
-            this.links['Contact'].setPosition(logoX + 100 * scaleFactor, logoY + 350 * scaleFactor);
-            this.links['Blog'].setPosition(logoX + 250 * scaleFactor, logoY + 300 * scaleFactor);
-            this.links['Blog'].setPosition(logoX + 400 * scaleFactor, logoY + 240 * scaleFactor);
-        }
+            // if (this.links) {
+            //     this.links['Home'].setPosition(logoX - 190 * scaleFactor, logoY + 130 * scaleFactor);
+            //     this.links['Projects'].setPosition(logoX - 20 * scaleFactor, logoY + 70 * scaleFactor);
+            //     this.links['About'].setPosition(logoX + 160 * scaleFactor, logoY + 20 * scaleFactor);
+            //     this.links['Contact'].setPosition(logoX + 100 * scaleFactor, logoY + 350 * scaleFactor);
+            //     this.links['Blog'].setPosition(logoX + 250 * scaleFactor, logoY + 300 * scaleFactor);
+            //     this.links['Blog'].setPosition(logoX + 400 * scaleFactor, logoY + 240 * scaleFactor);
+            // }
         }
     
         if (this.donuts && this.donuts.length > 0) {
@@ -346,9 +341,14 @@ export class MainMenu extends Scene {
         }
     }
 
-    createInteractiveZone(x, y, radius, name, imageName) {
-        const zone = this.add.zone(x, y, radius * 2, radius * 2).setCircleDropZone(radius).setName(name).setInteractive();
-
+    createInteractiveZoneRelativeToLogo(offsetX, offsetY, radius, name, imageName) {        
+        const zone = this.add.zone(
+            this.logo.x + offsetX * this.logo.scaleX,
+            this.logo.y + offsetY * this.logo.scaleY,
+            radius * 2,
+            radius * 2
+        ).setCircleDropZone(radius).setName(name).setInteractive();
+    
         zone.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
             this.highlightLink(name, true);
@@ -395,12 +395,16 @@ export class MainMenu extends Scene {
 
     }
 
-    createLink(x, y, label, imageName, scaleFactor) {
-        const linkText = this.add.text(x, y, label, {
-            fontSize: 25 * scaleFactor,
-            fontFamily: 'Cedarville Cursive',
-            className: 'cedarville-cursive-regular',
-        }).setOrigin(0.5).setDepth(101).setInteractive();
+    createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor) {
+        const linkText = this.add.text(
+            this.logo.x + offsetX * this.logo.scaleX,
+            this.logo.y + offsetY * this.logo.scaleY,
+            label, {
+                fontSize: 25 * scaleFactor,
+                fontFamily: 'Cedarville Cursive',
+                className: 'cedarville-cursive-regular',
+            }
+        ).setOrigin(0.5).setDepth(101).setInteractive();
     
         linkText.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
