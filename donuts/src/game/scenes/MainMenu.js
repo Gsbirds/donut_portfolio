@@ -46,41 +46,18 @@ export class MainMenu extends Scene {
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 200, 75 * scaleFactor, 'Projects', 'second-donut');
             this.createInteractiveZone(this.logo.x + 250, this.logo.y + 200, 75 * scaleFactor, 'About', 'third-donut');
             this.createInteractiveZone(this.logo.x + 100, this.logo.y + 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
-            this.createInteractiveZone(this.logo.x + 250, this.logo.y + 300, 75 * scaleFactor, 'Blog', 'fifth-donut');
             this.createInteractiveZone(this.logo.x + 400, this.logo.y + 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
     
             this.createLink(this.logo.x - 190, this.logo.y + 130, 'Home', 'first-donut', scaleFactor);
             this.createLink(this.logo.x - 20, this.logo.y + 70, 'Projects', 'second-donut', scaleFactor);
             this.createLink(this.logo.x + 160, this.logo.y + 20, 'About', 'third-donut', scaleFactor);
             this.createLink(this.logo.x + 100, this.logo.y + 350, 'Contact', 'fourth-donut', scaleFactor);
-            this.createLink(this.logo.x + 250, this.logo.y + 300, 'Blog', 'fifth-donut', scaleFactor);
             this.createLink(this.logo.x + 400, this.logo.y + 240, 'Blog', 'sixth-donut', scaleFactor);
     
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
    
-    }
-
-    resizeLargeDonutBox() {
-        const scaleFactor = this.calculateScaleFactor();
-
-        if (this.logo) {
-            const logoX = 512 * scaleFactor;
-            const logoY = 384 * scaleFactor;
-
-            this.logo.setScale(0.75 * scaleFactor);
-            this.logo.setPosition(logoX, logoY);
-        }
-
-        if (this.links) {
-            this.links['Home'].setPosition(logoX - 190 * scaleFactor, logoY + 130 * scaleFactor);
-            this.links['Projects'].setPosition(logoX - 20 * scaleFactor, logoY + 70 * scaleFactor);
-            this.links['About'].setPosition(logoX + 160 * scaleFactor, logoY + 20 * scaleFactor);
-            this.links['Contact'].setPosition(logoX + 100 * scaleFactor, logoY + 350 * scaleFactor);
-            this.links['Blog'].setPosition(logoX + 250 * scaleFactor, logoY + 300 * scaleFactor);
-            this.links['Blog'].setPosition(logoX + 400 * scaleFactor, logoY + 240 * scaleFactor);
-        }
     }
 
    
@@ -183,7 +160,7 @@ export class MainMenu extends Scene {
     }
     
     calculateScaleFactor() {
-        return Math.min(window.innerWidth / 1520, window.innerHeight / 680);
+        return Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     }
 
     resizeHandler() {
@@ -191,6 +168,14 @@ export class MainMenu extends Scene {
         
         if (this.logo) {
             this.logo.setScale(0.4 * this.scaleFactor);
+                    if (this.links) {
+            this.links['Home'].setPosition(logoX - 190 * scaleFactor, logoY + 130 * scaleFactor);
+            this.links['Projects'].setPosition(logoX - 20 * scaleFactor, logoY + 70 * scaleFactor);
+            this.links['About'].setPosition(logoX + 160 * scaleFactor, logoY + 20 * scaleFactor);
+            this.links['Contact'].setPosition(logoX + 100 * scaleFactor, logoY + 350 * scaleFactor);
+            this.links['Blog'].setPosition(logoX + 250 * scaleFactor, logoY + 300 * scaleFactor);
+            this.links['Blog'].setPosition(logoX + 400 * scaleFactor, logoY + 240 * scaleFactor);
+        }
         }
     
         if (this.donuts && this.donuts.length > 0) {
@@ -201,11 +186,6 @@ export class MainMenu extends Scene {
     
                 this.donuts[i].setScale(0.3 * this.scaleFactor);
                 this.donuts[i].setPosition(position.x, position.y);
-    
-                if (this.linkTexts[i]) {
-                    this.linkTexts[i].setFontSize(25 * this.scaleFactor);
-                    this.linkTexts[i].setPosition(position.x, position.y + 70 * this.scaleFactor);
-                }
             }
     
             if (this.donuts[0].alpha > 0) {
@@ -239,7 +219,7 @@ export class MainMenu extends Scene {
             this.tweens.add({
                 targets: linkTexts[i],
                 x: position.x,
-                y: position.y + 70,
+                y: position.y + 50,
                 alpha: 1,
                 duration: 500,
                 ease: 'Power2'
