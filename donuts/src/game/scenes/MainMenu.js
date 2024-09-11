@@ -9,6 +9,11 @@ export class MainMenu extends Scene {
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
     
+        const maxLogoWidth = 150; 
+        const maxLogoHeight = 150;
+        if (window.location.pathname === '/home') {
+        localStorage.removeItem('donutClicked');
+        }
         if (window.location.pathname === '/home') {
             localStorage.removeItem('donutClicked');
         }
@@ -72,12 +77,24 @@ export class MainMenu extends Scene {
     
         const isSmallScreen = window.innerWidth <= 768;
     
+        const maxDonutWidth = 100;
+        const maxDonutHeight = 100;
+    
         for (let i = 0; i < donutImages.length; i++) {
             const position = this.calculateDonutPosition(i, scaleFactor, isSmallScreen);
     
-            const donut = this.add.image(position.x, position.y, donutImages[i])
-                .setDepth(101)
-                .setScale(0.3 * scaleFactor)
+            const donut = this.add.image(position.x, position.y, donutImages[i]).setDepth(101);
+    
+            const donutWidth = donut.width * 0.3 * scaleFactor;
+            const donutHeight = donut.height * 0.3 * scaleFactor;
+    
+            const adjustedDonutScaleFactor = Math.min(
+                0.3 * scaleFactor,
+                maxDonutWidth / donut.width,
+                maxDonutHeight / donut.height
+            );
+    
+            donut.setScale(adjustedDonutScaleFactor)
                 .setAlpha(0)
                 .setInteractive({ useHandCursor: true })
                 .setName(donutLinks[i]);
@@ -119,7 +136,7 @@ export class MainMenu extends Scene {
             this.donuts.push(donut);
             this.linkTexts.push(linkText);
         }
-        
+    
         this.logo.setInteractive();
     
         this.logo.on('pointerover', () => {
@@ -145,19 +162,19 @@ export class MainMenu extends Scene {
             const isSmallScreen = window.innerWidth <= 768;
             if (menuStaysOut) {
                 this.resizeHandler();
-
+    
                 this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 menuStaysOut = false;
             } else {
                 this.resizeHandler();
-
+    
                 clearTimeout(hideDonutsTimer);
                 this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 menuStaysOut = true;
             }
         });
-        
     }
+    
     
     calculateScaleFactor() {
         return Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
