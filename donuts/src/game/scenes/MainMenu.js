@@ -37,8 +37,18 @@ export class MainMenu extends Scene {
         const background = this.add.image(512, 384, 'background');
         background.setAlpha(0);
 
-        const logoX = window.innerWidth / 2;
-        const logoY = window.innerHeight / 2;
+        let logoX, logoY;
+
+        const isSmallScreen = window.innerWidth <= 768;
+
+        if (isSmallScreen){
+            logoX = 284;
+            logoY = 712;
+        } else {
+
+        logoX = 442;
+        logoY = 744;
+        }
 
         this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
 
@@ -98,7 +108,7 @@ export class MainMenu extends Scene {
                 fontSize: 25,
                 fontFamily: 'Cedarville Cursive',
                 className: 'cedarville-cursive-regular',
-                fill: '#a94064'
+                fill: '#3e4346'
             }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
     
             donut.on('pointerover', () => {
@@ -180,14 +190,6 @@ export class MainMenu extends Scene {
         
         if (this.logo) {
             this.logo.setScale(0.4 * this.scaleFactor);
-            // if (this.links) {
-            //     this.links['Home'].setPosition(logoX - 190 * scaleFactor, logoY + 130 * scaleFactor);
-            //     this.links['Projects'].setPosition(logoX - 20 * scaleFactor, logoY + 70 * scaleFactor);
-            //     this.links['About'].setPosition(logoX + 160 * scaleFactor, logoY + 20 * scaleFactor);
-            //     this.links['Contact'].setPosition(logoX + 100 * scaleFactor, logoY + 350 * scaleFactor);
-            //     this.links['Blog'].setPosition(logoX + 250 * scaleFactor, logoY + 300 * scaleFactor);
-            //     this.links['Blog'].setPosition(logoX + 400 * scaleFactor, logoY + 240 * scaleFactor);
-            // }
         }
     
         if (this.donuts && this.donuts.length > 0) {
@@ -278,10 +280,10 @@ export class MainMenu extends Scene {
             });
         };
 
-        showImage(712, 495, 'closed', 0.75, 100, () => {
-            showImage(712, 495, 'mostlyclosed', 0.75, 100, () => {
-                showImage(712, 495, 'halfway', 0.75, 100, () => {
-                    showImage(712, 495, 'mostlyopen', 0.75, 100, callback);
+        showImage(512, 384, 'closed', 0.75, 100, () => {
+            showImage(512, 384, 'mostlyclosed', 0.75, 100, () => {
+                showImage(512, 384, 'halfway', 0.75, 100, () => {
+                    showImage(512, 384, 'mostlyopen', 0.75, 100, callback);
                 });
             });
         });
