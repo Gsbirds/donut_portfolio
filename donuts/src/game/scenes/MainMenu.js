@@ -58,12 +58,12 @@ export class MainMenu extends Scene {
         this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
         this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
     
-        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor);
-        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor);
-        this.createLinkRelativeToLogo(160, 20, 'About', 'third-donut', scaleFactor);
-        this.createLinkRelativeToLogo(100, 350, 'Contact', 'fourth-donut', scaleFactor);
-        this.createLinkRelativeToLogo(400, 240, 'Blog', 'sixth-donut', scaleFactor);
-    
+        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor, Phaser.Math.DegToRad(-19));  
+        this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scaleFactor, Phaser.Math.DegToRad(-19));  
+        this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scaleFactor, Phaser.Math.DegToRad(-25)); 
+        this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scaleFactor, Phaser.Math.DegToRad(-19));  
+        
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
@@ -100,7 +100,7 @@ export class MainMenu extends Scene {
             );
     
             donut.setScale(adjustedDonutScaleFactor)
-                .setAlpha(0)
+                .setAlpha(0) 
                 .setInteractive({ useHandCursor: true })
                 .setName(donutLinks[i]);
     
@@ -135,7 +135,18 @@ export class MainMenu extends Scene {
                 } else {
                     url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
                 }
-                window.location.href = url;
+    
+                this.tweens.add({
+                    targets: donut,
+                    angle: { from: 0, to: 360 },
+                    y: { from: position.y - 50, to: position.y + 50 },
+                    duration: 1000, 
+                    yoyo: true,
+                    ease: 'Sine.easeInOut',
+                    onComplete: () => {
+                        window.location.href = url;
+                    }
+                });
             });
     
             this.donuts.push(donut);
@@ -167,18 +178,17 @@ export class MainMenu extends Scene {
             const isSmallScreen = window.innerWidth <= 768;
             if (menuStaysOut) {
                 this.resizeHandler();
-    
                 this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 menuStaysOut = false;
             } else {
                 this.resizeHandler();
-    
                 clearTimeout(hideDonutsTimer);
-                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
+                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen); 
                 menuStaysOut = true;
             }
         });
     }
+    
     
     
     calculateScaleFactor() {
@@ -404,7 +414,7 @@ export class MainMenu extends Scene {
     }
 
 
-    createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor) {
+    createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor, rotation) {
         const linkText = this.add.text(
             this.logo.x + offsetX * this.logo.scaleX,
             this.logo.y + offsetY * this.logo.scaleY,
@@ -414,6 +424,8 @@ export class MainMenu extends Scene {
                 className: 'cedarville-cursive-regular',
             }
         ).setOrigin(0.5).setDepth(101).setInteractive();
+
+        linkText.setRotation(rotation);
     
         linkText.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
@@ -472,6 +484,7 @@ export class MainMenu extends Scene {
         this.links = this.links || {};
         this.links[label] = linkText;
     }
+    
     
     
 
