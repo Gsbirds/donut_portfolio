@@ -89,12 +89,16 @@ export class MainMenu extends Scene {
         let menuStaysOut = false;
     
         const isSmallScreen = window.innerWidth <= 768;
-    
+        const isLargeScreen = window.innerWidth > 1100;
         const maxDonutWidth = 100;
         const maxDonutHeight = 100;
+
+        const donutGap = isLargeScreen ? 5 : 20; // 5px gap if screen > 1100px, otherwise default
+        const textGap = isLargeScreen ? 70 : 50; // 70px gap if screen > 1100px, otherwise default
+    
     
         for (let i = 0; i < donutImages.length; i++) {
-            const position = this.calculateDonutPosition(i, scaleFactor, isSmallScreen);
+            const position = this.calculateDonutPosition(i, scaleFactor, isSmallScreen, donutGap);
     
             const donut = this.add.image(position.x, position.y, donutImages[i]).setDepth(101);
     
@@ -112,7 +116,7 @@ export class MainMenu extends Scene {
                 .setInteractive({ useHandCursor: true })
                 .setName(donutLinks[i]);
     
-            const linkText = this.add.text(position.x, position.y, donutLinks[i], {
+            const linkText = this.add.text(position.x, position.y + textGap, donutLinks[i], {
                 fontSize: 25,
                 fontFamily: 'Cedarville Cursive',
                 className: 'cedarville-cursive-regular',
@@ -122,12 +126,10 @@ export class MainMenu extends Scene {
             donut.on('pointerover', () => {
                 clearTimeout(hideDonutsTimer);
                 this.input.manager.canvas.style.cursor = 'pointer';
-                this.highlightLink(donutLinks[i], true);
             });
     
             donut.on('pointerout', () => {
                 this.input.manager.canvas.style.cursor = 'default';
-                this.highlightLink(donutLinks[i], false);
     
                 if (!menuStaysOut) {
                     hideDonutsTimer = setTimeout(() => {
@@ -151,7 +153,7 @@ export class MainMenu extends Scene {
                     targets: donut,
                     angle: { from: 0, to: 360 },
                     y: { from: position.y - 50, to: position.y + 50 },
-                    duration: 1000, 
+                    duration: 600, 
                     yoyo: true,
                     ease: 'Sine.easeInOut',
                     onComplete: () => {
@@ -171,7 +173,7 @@ export class MainMenu extends Scene {
             this.input.manager.canvas.style.cursor = 'pointer';
             if (!menuStaysOut) {
                 const isSmallScreen = window.innerWidth <= 768;
-                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
+                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen, donutGap);
             }
         });
     
@@ -188,18 +190,15 @@ export class MainMenu extends Scene {
         this.logo.on('pointerdown', () => {
             const isSmallScreen = window.innerWidth <= 768;
             if (menuStaysOut) {
-                this.resizeHandler();
                 this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
                 menuStaysOut = false;
             } else {
-                this.resizeHandler();
                 clearTimeout(hideDonutsTimer);
-                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen); 
+                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen, donutGap); 
                 menuStaysOut = true;
             }
         });
     }
-    
     
     
     calculateScaleFactor() {
@@ -231,16 +230,16 @@ export class MainMenu extends Scene {
     
     
     
-    calculateDonutPosition(i, scaleFactor, isSmallScreen) {
-        const xPosition = isSmallScreen ? 100 : 250 + (i * 125);
+    calculateDonutPosition(i, scaleFactor, isSmallScreen, donutGap) {
+        const xPosition = isSmallScreen ? 100 : 250 + (i * 125 + donutGap);
         const yPosition = isSmallScreen ? 150 + (i * 100 * scaleFactor) : 100 * scaleFactor;
         return { x: xPosition, y: yPosition };
     }
 
     
-    showDonuts(donuts, linkTexts, isSmallScreen) {
+    showDonuts(donuts, linkTexts, isSmallScreen, donutGap) {
         for (let i = 0; i < donuts.length; i++) {
-            const position = this.calculateDonutPosition(i, 1, isSmallScreen);
+            const position = this.calculateDonutPosition(i, 1, isSmallScreen, donutGap);
     
             this.tweens.add({
                 targets: donuts[i],
@@ -491,9 +490,6 @@ export class MainMenu extends Scene {
                         if (label === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                         } else {
-                            // if (label=='Home'){
-                            //     EventBus.emit('home-menu-clicked', true);
-                            // }
                             url = `${window.location.origin}/${label.toLowerCase()}`;
                         }
                         window.location.href = url;
@@ -509,16 +505,7 @@ export class MainMenu extends Scene {
         this.links = this.links || {};
         this.links[label] = linkText;
     }
-    
-    
-    
 
-    highlightLink(label, highlight) {
-        const linkText = this.links[label];
-        if (linkText) {
-            linkText.setStyle({ fill: highlight ? '#fc5c85' : '#a94064' });
-        }
-    }
 
     changeScene() {
         if (this.logoTween) {

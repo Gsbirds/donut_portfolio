@@ -7,15 +7,15 @@ function Contact() {
         <div className="parallax">
           <section id="contact">
     <h2>Contact me</h2>
-    <p class="message">I'd love to hear your thoughts!</p>
-    <button class="contact_btn" type="button">
+    <p className="message">I'd love to hear your thoughts!</p>
+    <button className="contact_btn" type="button">
       <a href="mailto: gabbyburgard@the-gabby.com">Contact me</a>
     </button>
   </section>
 
   <footer>
-    <h1 class="fullstack">Gabby Burgard <i id="heart" class="fa-solid fa-heart"></i> Fullstack Developer and Artist.</h1>
-    <img class="inkpad" src="assets/inkpad1.png"></img>
+    <h1 className="fullstack">Gabby Burgard <i id="heart" className="fa-solid fa-heart"></i> Fullstack Developer and Artist.</h1>
+    <img className="inkpad" src="assets/inkpad1.png"></img>
   </footer>
         </div>
         

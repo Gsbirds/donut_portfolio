@@ -193,7 +193,7 @@ function Projects() {
                 </section>
             </section>
 
-            <img class="inkpad2" src="assets/Ssssnakepad1.png"></img>
+            <img className="inkpad2" src="assets/Ssssnakepad1.png"></img>
             </div>
         </div>
     );
