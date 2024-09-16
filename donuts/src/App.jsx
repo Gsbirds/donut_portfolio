@@ -13,6 +13,7 @@ function App() {
     const [logoPosition, setLogoPosition] = useState({ x: 0, y: 0 });
     const [sceneReady, setSceneReady] = useState(false);
     const [donutClicked, setDonutClicked] = useState(false);
+    const [homeMenuClicked, sethomeMenuClicked] = useState(false)
 
     useEffect(() => {
         const handleCurrentSceneReady = (scene) => {
@@ -30,11 +31,16 @@ function App() {
             setDonutClicked(clicked);
             localStorage.setItem('donutClicked', JSON.stringify(clicked));
         });
+        EventBus.on('home-menu-clicked', (clicked) => {
+            sethomeMenuClicked(clicked);
+            localStorage.setItem('homeMenuClicked', JSON.stringify(clicked));
+        });
 
         return () => {
             EventBus.off('current-scene-ready', handleCurrentSceneReady);
             EventBus.off('logo-position', handleLogoPosition);
             EventBus.removeListener('donut-clicked');
+            EventBus.removeListener('home-menu-clicked');
         };
     }, []);
 
@@ -49,7 +55,7 @@ function App() {
         <div>
             <div id="app">
                 <div className="phaser-container">
-                    <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} />
+                    <PhaserGame ref={phaserRef} donutClicked={donutClicked} setDonutClicked={setDonutClicked} homeMenuClicked={homeMenuClicked} sethomeMenuClicked={sethomeMenuClicked}/>
                     {sceneReady && <div></div>}
                 </div>
             </div>

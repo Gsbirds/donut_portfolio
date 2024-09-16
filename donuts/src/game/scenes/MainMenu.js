@@ -9,13 +9,23 @@ export class MainMenu extends Scene {
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
 
+        const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
+
         if (window.location.pathname === '/home') {
-        localStorage.removeItem('donutClicked');
+            localStorage.removeItem('donutClicked');
+
+            if (isPageRefreshed) {
+                EventBus.emit('home-menu-clicked', false);
+            }
         }
-    
+
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
-    
+
         if (isDonutClicked) {
+            if (window.location.pathname !== '/home') {
+                EventBus.emit('home-menu-clicked', false);
+            }
+
             this.logo = this.add.image(120, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
             this.createSlidingDonuts(scaleFactor);
             this.logo.setInteractive();
@@ -34,40 +44,38 @@ export class MainMenu extends Scene {
         }
 
         this.showInitialImages(() => {
-        const background = this.add.image(512, 384, 'background');
-        background.setAlpha(0);
+            const background = this.add.image(512, 384, 'background');
+            background.setAlpha(0);
 
-        let logoX, logoY;
+            let logoX, logoY;
 
-        const isSmallScreen = window.innerWidth <= 768;
+            const isSmallScreen = window.innerWidth <= 768;
 
-        if (isSmallScreen){
-            logoX = 284;
-            logoY = 712;
-        } else {
+            if (isSmallScreen) {
+                logoX = 284;
+                logoY = 712;
+            } else {
+                logoX = 442;
+                logoY = 744;
+            }
 
-        logoX = 442;
-        logoY = 744;
-        }
+            this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
 
-        this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
+            this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scaleFactor, 'Home', 'first-donut');
+            this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scaleFactor, 'Projects', 'second-donut');
+            this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scaleFactor, 'About', 'third-donut');
+            this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
+            this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
 
-        this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scaleFactor, 'Home', 'first-donut');
-        this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scaleFactor, 'Projects', 'second-donut');
-        this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scaleFactor, 'About', 'third-donut');
-        this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
-        this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
-    
-        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor, Phaser.Math.DegToRad(-19));  
-        this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scaleFactor, Phaser.Math.DegToRad(-19));  
-        this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scaleFactor, Phaser.Math.DegToRad(-25)); 
-        this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scaleFactor, Phaser.Math.DegToRad(-19));  
-        
+            this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+            this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+            this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+            this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
+            this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
+
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
-   
     }
 
    
@@ -133,6 +141,9 @@ export class MainMenu extends Scene {
                 if (donutLinks[i] === 'Blog') {
                     url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                 } else {
+                    if (donutLinks[i]=='Home'){
+                        EventBus.emit('home-menu-clicked', true);
+                    }
                     url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
                 }
     
@@ -353,7 +364,7 @@ export class MainMenu extends Scene {
         }
     }
 
-    createInteractiveZoneRelativeToLogo(offsetX, offsetY, radius, name, imageName) {        
+    createInteractiveZoneRelativeToLogo(offsetX, offsetY, radius, name, imageName) {
         const zone = this.add.zone(
             this.logo.x + offsetX * this.logo.scaleX,
             this.logo.y + offsetY * this.logo.scaleY,
@@ -363,15 +374,15 @@ export class MainMenu extends Scene {
     
         zone.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
-            this.highlightLink(name, true);
         });
+    
         zone.on('pointerout', () => {
             this.input.manager.canvas.style.cursor = 'default';
-            this.highlightLink(name, false);
         });
-
+    
         zone.on('pointerdown', () => {
             let spriteName;
+    
             if (name === 'Home' || name === 'Art') {
                 spriteName = 'pink-donut';
             } else if (name === 'Projects' || name === 'Blog') {
@@ -379,15 +390,23 @@ export class MainMenu extends Scene {
             } else if (name === 'About' || name === 'Contact') {
                 spriteName = 'choco-donut';
             }
-
+    
+            if (this.zones) {
+                this.zones.forEach(zone => zone.destroy());
+            }
+    
+            if (this.linkTexts) {
+                this.linkTexts.forEach(text => text.destroy());
+            }
+    
             if (this.logo) {
                 this.logo.destroy();
             }
-
+    
             this.logo = this.add.image(612, 495, imageName).setScale(0.75);
-
+    
             this.addSprite(spriteName);
-
+    
             this.reverseImages(() => {
                 this.tweens.add({
                     targets: this.logo,
@@ -396,22 +415,25 @@ export class MainMenu extends Scene {
                     duration: 1000,
                     ease: 'Power2',
                     onComplete: () => {
-                        let url=''
-                        if (name=='Blog'){
-                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';  
+                        let url = '';
+                        if (name === 'Blog') {
+                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                         } else {
                             url = `${window.location.origin}/${name.toLowerCase()}`;
                         }
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
                     }
-                    
                 });
             });
-
         });
-
+    
+        this.zones = this.zones || [];
+        this.zones.push(zone);
     }
+    
+    
+    
 
 
     createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor, rotation) {
@@ -469,6 +491,9 @@ export class MainMenu extends Scene {
                         if (label === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                         } else {
+                            // if (label=='Home'){
+                            //     EventBus.emit('home-menu-clicked', true);
+                            // }
                             url = `${window.location.origin}/${label.toLowerCase()}`;
                         }
                         window.location.href = url;

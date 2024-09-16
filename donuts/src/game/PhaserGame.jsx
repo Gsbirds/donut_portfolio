@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types';
-import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import StartGame from './main';
 import { EventBus } from './EventBus';
 
-export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, setDonutClicked }, ref) {
+export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, setDonutClicked, sethomeMenuClicked }, ref) {
     const game = useRef();
+    const [homeMenuClicked, setHomeMenuClicked] = useState(JSON.parse(localStorage.getItem('homeMenuClicked')));
 
     useLayoutEffect(() => {
         if (game.current === undefined) {
-            game.current = StartGame("game-container", setDonutClicked);
+            const containerId = homeMenuClicked ? 'game-container-adjust' : 'game-container';
+
+            game.current = StartGame(containerId, setDonutClicked, sethomeMenuClicked);
             if (ref !== null) {
                 ref.current = { game: game.current, scene: null };
             }
@@ -20,7 +23,7 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, s
                 game.current = undefined;
             }
         };
-    }, [ref, setDonutClicked]);
+    }, [ref, setDonutClicked, sethomeMenuClicked]);
 
     useEffect(() => {
         EventBus.on('current-scene-ready', (currentScene) => {
@@ -30,22 +33,31 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, s
             ref.current.scene = currentScene;
         });
 
-           EventBus.on('donut-clicked', (clicked) => {
+        EventBus.on('donut-clicked', (clicked) => {
             setDonutClicked(clicked);
             localStorage.setItem('donutClicked', JSON.stringify(clicked));
+        });
+
+        EventBus.on('home-menu-clicked', (clicked) => {
+            sethomeMenuClicked(clicked);
+            setHomeMenuClicked(clicked);
+            localStorage.setItem('homeMenuClicked', JSON.stringify(clicked));
         });
 
         return () => {
             EventBus.removeListener('current-scene-ready');
             EventBus.removeListener('donut-clicked');
+            EventBus.removeListener('home-menu-clicked');
         };
-    }, [currentActiveScene, ref, setDonutClicked]);
+    }, [currentActiveScene, ref, setDonutClicked, sethomeMenuClicked]);
 
-    return <div id="game-container"></div>;
+    const containerId = homeMenuClicked ? 'game-container-adjust' : 'game-container';
+
+    return <div id={containerId}></div>;
 });
 
-// Props definitions
 PhaserGame.propTypes = {
     currentActiveScene: PropTypes.func,
-    setDonutClicked: PropTypes.func.isRequired
+    setDonutClicked: PropTypes.func.isRequired,
+    sethomeMenuClicked: PropTypes.func.isRequired,
 };
