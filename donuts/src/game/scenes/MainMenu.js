@@ -146,7 +146,7 @@ export class MainMenu extends Scene {
                     if (donutLinks[i]=='Home'){
                         EventBus.emit('home-menu-clicked', true);
                     }
-                    url = `${window.location.origin}/${donutLinks[i].toLowerCase()}`;
+                    url = `${window.location.origin}/donut_portfolio/${donutLinks[i].toLowerCase()}`;
                 }
     
                 this.tweens.add({
@@ -418,7 +418,7 @@ export class MainMenu extends Scene {
                         if (name === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                         } else {
-                            url = `${window.location.origin}/${name.toLowerCase()}`;
+                            url = `${window.location.origin}/donut_portfolio/${name.toLowerCase()}`;
                         }
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
@@ -490,7 +490,7 @@ export class MainMenu extends Scene {
                         if (label === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                         } else {
-                            url = `${window.location.origin}/${label.toLowerCase()}`;
+                            url = `${window.location.origin}/donut_portfolio/${label.toLowerCase()}`;
                         }
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
