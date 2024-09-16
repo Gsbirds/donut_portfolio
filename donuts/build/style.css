@@ -31,7 +31,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url("donuts/public/assets/donutwallpaper.png");
+  background-image: url("/assets/donutwallpaper.png");
   max-width: 800px;
   margin: auto;
 }
