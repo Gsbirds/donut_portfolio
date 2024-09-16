@@ -138,6 +138,13 @@ body {
   width: 900px;
 }
 
+.phaser-container{
+  padding-bottom: 80px;
+  margin-bottom: 80px;
+}
+
+
+
 #projects img {
   margin: 2rem 0 4rem 0;
   padding: 1rem;
@@ -224,7 +231,7 @@ footer ul {
 .cedarville-cursive-regular {
   font-family: "Cedarville Cursive", cursive;
   font-weight: 400;
-  font-style: normal;
+  font-style: normal;  // Update state
 }
 
 
@@ -236,19 +243,32 @@ footer ul {
 
 #game-container {
   position: fixed;
-  top: 20%;
-  left: 47%;
+  left: 67%;
   transform: translate(-50%, -50%);
-  padding-top: 2rem;
 }
 
+#game-container-adjust {
+  position: fixed;
+  left: 47%;
+  transform: translate(-50%, -210%);
+}
+
+@media (min-width: 1100px) {
+  #game-container {
+    width: 110%; 
+    top: 20%;
+    padding-top: 2rem;
+    margin-top: 3rem;
+  }
+
+}
 
 
 @media (max-width: 1200px) {
   #game-container {
     width: 80%; 
     top: 20%;
-    left: 50%; 
+    left: 40%; 
     right: 70%;
   }
   .inkpad, .inkpad2{
@@ -256,6 +276,12 @@ footer ul {
     align-items: center;
     /* margin-top: -220px;
     margin-bottom: -200px; */
+  }
+
+
+  #game-container {
+    right: 90%; 
+
   }
 
 }
@@ -274,11 +300,14 @@ footer ul {
   }
 
   .inkpad, .inkpad2{
-    width:400px;
+    width:700px;
     align-items: center;
     margin-top: .5rem;
+  }
 
-
+  .inkpad2{
+    padding-left: 100px;
+    padding-bottom: 20px;
   }
 
   .worked {
@@ -291,7 +320,7 @@ footer ul {
 
   #game-container {
     top: 15%;
-    left: 30%; 
+    left: 35%; 
     right: 90%; 
 
   }
@@ -335,5 +364,39 @@ footer ul {
 
   }
 
+  .inkpad2{
+    padding-left: 60px;
+    padding-bottom: 20px;
+  }
+
+  .phaser-container{
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  
+
 }
 
+.link {
+  color: #8d5f74;
+  text-decoration: underline;
+  display: inline-block;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+
+@media (max-width: 600px) {
+  /* .blackbox, .introbox, #projects img {
+    font-size: small;
+    padding: 3.5rem;
+    width:270px;
+  } */
+
+  #game-container {
+    top: 20%;
+    left: 25%; 
+    right: 90%; 
+  }
+
+}
