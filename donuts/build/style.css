@@ -1,3 +1,7 @@
+html, body{
+  overflow-y: auto; 
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -13,6 +17,8 @@ body {
   min-height: 100vh;
   padding-bottom: 20px;
   background-position: center center;
+  touch-action: manipulation;
+  overflow-x: hidden; 
 }
 
 #app {
@@ -33,6 +39,7 @@ body {
   background-image: url("./assets/donutwallpaper.png");
   max-width: 800px;
   margin: auto;
+  overflow: auto; /
 }
 
 .project-title {
