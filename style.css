@@ -34,7 +34,6 @@ body {
   background-image: url("./assets/donutwallpaper.png");
   max-width: 800px;
   margin: auto;
-  overflow: auto; /
 }
 
 .project-title {
