@@ -61,9 +61,9 @@ function App() {
             </div>
             <Router basename="/donut_portfolio">
                 <Routes>
-                    <Route path="/projects" element={<Projects />} />
-                    <Route path="/about" element={<Info />} />
-                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/#/projects" element={<Projects />} />
+                    <Route path="/#/about" element={<Info />} />
+                    <Route path="/#/contact" element={<Contact />} />
                 </Routes>
             </Router>
 
