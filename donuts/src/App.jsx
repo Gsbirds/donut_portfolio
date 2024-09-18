@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { PhaserGame } from './game/PhaserGame';
 import { EventBus } from './game/EventBus';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import Projects from './projects';
 import Info from './info';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -60,11 +60,11 @@ function App() {
                 </div>
             </div>
             <Router>
-                <Routes>
+                <Switch>
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/about" element={<Info />} />
                     <Route path="/contact" element={<Contact />} />
-                </Routes>
+                </Switch>
             </Router>
 
             {(location.pathname === '/contact' || location.pathname === '/projects' ||location.pathname === '/about') &&(
