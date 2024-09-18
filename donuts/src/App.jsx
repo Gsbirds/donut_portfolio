@@ -13,7 +13,7 @@ function App() {
     const [logoPosition, setLogoPosition] = useState({ x: 0, y: 0 });
     const [sceneReady, setSceneReady] = useState(false);
     const [donutClicked, setDonutClicked] = useState(false);
-    const [homeMenuClicked, sethomeMenuClicked] = useState(false);
+    const [homeMenuClicked, sethomeMenuClicked] = useState(false)
 
     useEffect(() => {
         const handleCurrentSceneReady = (scene) => {
@@ -49,7 +49,7 @@ function App() {
         if (scene) {
             scene.changeScene();
         }
-    };
+    }
 
     return (
         <div>
@@ -59,7 +59,7 @@ function App() {
                     {sceneReady && <div></div>}
                 </div>
             </div>
-            <Router basename="/donut_portfolio">
+            <Router>
                 <Routes>
                     <Route path="/#/projects" element={<Projects />} />
                     <Route path="/#/about" element={<Info />} />
@@ -67,7 +67,7 @@ function App() {
                 </Routes>
             </Router>
 
-            {(location.pathname === '/contact' || location.pathname === '/projects' || location.pathname === '/about') && (
+            {(location.pathname === '/contact' || location.pathname === '/projects' ||location.pathname === '/about') &&(
                 <footer>
                     <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
                 </footer>
