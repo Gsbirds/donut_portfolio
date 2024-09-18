@@ -59,7 +59,7 @@ function App() {
                     {sceneReady && <div></div>}
                 </div>
             </div>
-            <Router basename="/donut-portfolio">
+            <Router basename="/donut_portfolio">
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/about" element={<Info />} />
