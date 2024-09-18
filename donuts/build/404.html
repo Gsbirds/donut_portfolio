@@ -3,32 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css">
     <title>Page Not Found</title>
     <script>
-      // When the page loads, check the current URL
       window.onload = function() {
-        // Get the current path the user tried to access
         const path = window.location.pathname;
 
-        // Define the base URL of your app (replace 'your-repo-name' with your actual repo name)
         const baseURL = "/donut_portfolio";
 
-        // Check if the path corresponds to known routes and redirect accordingly
         if (path.includes("/projects")) {
           window.location.replace(baseURL + "/#/projects");
         } else if (path.includes("/about")) {
           window.location.replace(baseURL + "/#/about");
         } else if (path.includes("/contact")) {
           window.location.replace(baseURL + "/#/contact");
+        } else if (path.includes("/home")) {
+            window.location.replace(baseURL + "/#/home");
         } else {
-          // If the path doesn't match any known routes, redirect to the homepage
           window.location.replace(baseURL + "/#/");
         }
       };
     </script>
   </head>
   <body>
-    <h1>Page Not Found</h1>
-    <p>Redirecting to the appropriate page...</p>
   </body>
 </html>
