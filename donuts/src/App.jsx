@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { PhaserGame } from './game/PhaserGame';
 import { EventBus } from './game/EventBus';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Projects from './projects';
 import Info from './info';
 import 'bootstrap/dist/css/bootstrap.min.css';
