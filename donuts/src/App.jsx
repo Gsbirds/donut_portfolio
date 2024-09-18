@@ -60,11 +60,6 @@ function App() {
                 </div>
             </div>
             <Router>
-            <nav>
-            <Link to="/projects">Projects</Link>
-            <Link to="/about">About</Link>
-            <Link to="/contact">Contact</Link>
-            </nav>
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/about" element={<Info />} />
