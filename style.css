@@ -25,7 +25,6 @@ body {
 
 .parallax {
   padding-top: 4rem;
-  /* opacity: 0.9; */
   min-height: 500px;
   background-attachment: fixed;
   background-position: center;
