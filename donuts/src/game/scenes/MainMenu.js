@@ -22,61 +22,72 @@ export class MainMenu extends Scene {
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
 
         if (isDonutClicked) {
-            if (window.location.pathname !== '/home') {
-                EventBus.emit('home-menu-clicked', false);
-            }
-
-            this.logo = this.add.image(120, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
-            this.createSlidingDonuts(scaleFactor);
-            this.logo.setInteractive();
-            window.addEventListener('resize', () => {
-                this.resizeHandler();
-            });
-            this.logo.on('pointerover', () => {
-                this.input.manager.canvas.style.cursor = 'pointer';
-                this.logo.setTexture('mostlyclosed');
-            });
-            this.logo.on('pointerout', () => {
-                this.input.manager.canvas.style.cursor = 'default';
-                this.logo.setTexture('closed');
-            });
-            return;
+          this.showInitialClosedBox(scaleFactor)
+        } else{
+            this.showInitialOpenBox(scaleFactor)
         }
 
-        this.showInitialImages(() => {
-            const background = this.add.image(512, 384, 'background');
-            background.setAlpha(0);
-
-            let logoX, logoY;
-
-            const isSmallScreen = window.innerWidth <= 768;
-
-            if (isSmallScreen) {
-                logoX = 284;
-                logoY = 712;
-            } else {
-                logoX = 442;
-                logoY = 744;
-            }
-
-            this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
-
-            this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scaleFactor, 'Home', 'first-donut');
-            this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scaleFactor, 'Projects', 'second-donut');
-            this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scaleFactor, 'About', 'third-donut');
-            this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
-            this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
-
-            this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-            this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-            this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-            this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
-            this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
-
-            EventBus.emit('current-scene-ready', this);
-            EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
-        });
     }
+
+
+    showInitialClosedBox(scaleFactor){
+        if (window.location.pathname !== '/home') {
+            EventBus.emit('home-menu-clicked', false);
+        }
+
+        this.logo = this.add.image(120, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
+        this.createSlidingDonuts(scaleFactor);
+        this.logo.setInteractive();
+        window.addEventListener('resize', () => {
+            this.resizeHandler();
+        });
+        this.logo.on('pointerover', () => {
+            this.input.manager.canvas.style.cursor = 'pointer';
+            this.logo.setTexture('mostlyclosed');
+        });
+        this.logo.on('pointerout', () => {
+            this.input.manager.canvas.style.cursor = 'default';
+            this.logo.setTexture('closed');
+        });
+        return;
+    }
+
+    showInitialOpenBox(scaleFactor){
+        this.showInitialImages(() => {
+        const background = this.add.image(512, 384, 'background');
+        background.setAlpha(0);
+
+        let logoX, logoY;
+
+        const isSmallScreen = window.innerWidth <= 768;
+
+        if (isSmallScreen) {
+            logoX = 284;
+            logoY = 712;
+        } else {
+            logoX = 442;
+            logoY = 744;
+        }
+
+        this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
+
+        this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scaleFactor, 'Home', 'first-donut');
+        this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scaleFactor, 'Projects', 'second-donut');
+        this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scaleFactor, 'About', 'third-donut');
+        this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
+        this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
+
+        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scaleFactor, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
+        this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
+
+        EventBus.emit('current-scene-ready', this);
+        EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
+    });
+    }
+
 
    
     createSlidingDonuts(scaleFactor) {
@@ -506,37 +517,4 @@ export class MainMenu extends Scene {
         this.links[label] = linkText;
     }
 
-
-    changeScene() {
-        if (this.logoTween) {
-            this.logoTween.stop();
-            this.logoTween = null;
-        }
-    }
-
-    moveLogo(reactCallback) {
-        if (this.logoTween) {
-            if (this.logoTween.isPlaying()) {
-                this.logoTween.pause();
-            } else {
-                this.logoTween.play();
-            }
-        } else {
-            this.logoTween = this.tweens.add({
-                targets: this.logo,
-                x: { value: 750, duration: 3000, ease: 'Back.easeInOut' },
-                y: { value: 80, duration: 1500, ease: 'Sine.easeOut' },
-                yoyo: true,
-                repeat: -1,
-                onUpdate: () => {
-                    if (reactCallback) {
-                        reactCallback({
-                            x: Math.floor(this.logo.x),
-                            y: Math.floor(this.logo.y)
-                        });
-                    }
-                }
-            });
-        }
-    }
 }

@@ -44,12 +44,6 @@ function App() {
         };
     }, []);
 
-    const changeScene = () => {
-        const scene = phaserRef.current.scene;
-        if (scene) {
-            scene.changeScene();
-        }
-    }
 
     return (
         <div>
