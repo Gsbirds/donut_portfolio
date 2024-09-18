@@ -60,11 +60,11 @@ function App() {
                 </div>
             </div>
             <Router>
-                <Switch>
+                <Routes>
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/about" element={<Info />} />
                     <Route path="/contact" element={<Contact />} />
-                </Switch>
+                </Routes>
             </Router>
 
             {(location.pathname === '/contact' || location.pathname === '/projects' ||location.pathname === '/about') &&(
