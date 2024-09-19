@@ -12,7 +12,8 @@ export class MainMenu extends Scene {
         const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
 
         if (window.location.pathname.includes('home')) {
-            localStorage.removeItem('donutClicked');
+            EventBus.emit('donut-clicked', false);
+
             EventBus.emit('home-menu-clicked', false);
 
             if (isPageRefreshed) {
@@ -162,6 +163,7 @@ export class MainMenu extends Scene {
                         angle: { from: 0, to: 360 },
                         ease: 'Sine.easeInOut',
                         onComplete: () => {
+                        EventBus.emit('donut-clicked', false);
                         EventBus.emit('home-menu-clicked', true);
                         }
                     });
