@@ -60,42 +60,50 @@ export class MainMenu extends Scene {
         return;
     }
 
+
     showInitialOpenBox(scaleFactor){
         this.showInitialImages(() => {
-        const background = this.add.image(512, 384, 'background');
-        background.setAlpha(0);
-
-        let logoX, logoY;
-
-        const isSmallScreen = window.innerWidth <= 768;
-
-        if (isSmallScreen) {
-            logoX = 284;
-            logoY = 712;
-        } else {
-            logoX = 442;
-            logoY = 744;
-        }
-
-        this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(0.75 * scaleFactor);
-
-        this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scaleFactor, 'Home', 'first-donut');
-        this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scaleFactor, 'Projects', 'second-donut');
-        this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scaleFactor, 'About', 'third-donut');
-        this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scaleFactor, 'Contact', 'fourth-donut');
-        this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scaleFactor, 'Blog', 'sixth-donut');
-
-        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-        this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scaleFactor, Phaser.Math.DegToRad(-19));
-        this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
-        this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scaleFactor, Phaser.Math.DegToRad(-25));
-
-        EventBus.emit('current-scene-ready', this);
-        EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
-    });
+            const background = this.add.image(512, 384, 'background');
+            background.setAlpha(0);
+    
+            let logoX, logoY;
+    
+            const isSmallScreen = window.innerWidth <= 768;
+            
+            if (isSmallScreen) {
+                logoX = 254;
+                logoY = 712;
+            } else {
+                logoX = 442;
+                logoY = 744;
+            }
+    
+            const baseLogoSize = 480;
+            const baseLogoScale = 0.75 * scaleFactor;
+            const logoWidth = this.textures.get('logo').getSourceImage().width;
+            const calculatedScale = Math.max(baseLogoSize / logoWidth, baseLogoScale);
+    
+            this.logo = this.add.image(logoX, logoY, 'logo')
+                .setDepth(100)
+                .setScale(calculatedScale);
+    
+            this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * calculatedScale, 'Home', 'first-donut');
+            this.createInteractiveZoneRelativeToLogo(100, 200, 75 * calculatedScale, 'Projects', 'second-donut');
+            this.createInteractiveZoneRelativeToLogo(250, 200, 75 * calculatedScale, 'About', 'third-donut');
+            this.createInteractiveZoneRelativeToLogo(100, 300, 75 * calculatedScale, 'Contact', 'fourth-donut');
+            this.createInteractiveZoneRelativeToLogo(400, 300, 75 * calculatedScale, 'Blog', 'sixth-donut');
+    
+            this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', calculatedScale, Phaser.Math.DegToRad(-19));
+            this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', calculatedScale, Phaser.Math.DegToRad(-19));
+            this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', calculatedScale, Phaser.Math.DegToRad(-19));
+            this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
+            this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
+    
+            EventBus.emit('current-scene-ready', this);
+            EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
+        });
     }
-
+    
 
    
     createSlidingDonuts(scaleFactor) {
@@ -355,16 +363,29 @@ export class MainMenu extends Scene {
         reverseImage();
     }
 
+
     addSprite(spriteName) {
         const scene = this;
-
+        const isSmallScreen = window.innerWidth <= 768;
+    
         if (scene) {
-            const x = scene.scale.width / 2;
-            const y = scene.scale.height / 2;
+            let x
+            if (isSmallScreen){
+            x = (scene.scale.width / 2) -200;
+            }
+            else{
+            x = (scene.scale.width / 2) + 80;
 
+            }
+            const y = scene.scale.height / 2;
+    
             const star = scene.add.sprite(x, y, spriteName);
             star.setDepth(1000);
-
+    
+            if (isSmallScreen) {
+                star.setScale(1 / 3);
+            }
+    
             scene.add.tween({
                 targets: star,
                 y: { start: y - 200, to: y + 200 },
@@ -373,19 +394,21 @@ export class MainMenu extends Scene {
                 repeat: -1,
                 ease: 'Sine.easeInOut'
             });
-
+    
             scene.add.tween({
                 targets: star,
                 angle: 360,
                 duration: 1000,
                 repeat: -1
             });
-
+    
             scene.time.delayedCall(4000, () => {
                 star.destroy();
             });
         }
-    }
+        }
+
+    
 
     createInteractiveZoneRelativeToLogo(offsetX, offsetY, radius, name, imageName) {
         const zone = this.add.zone(
@@ -457,19 +480,20 @@ export class MainMenu extends Scene {
     
     
     
-
-
     createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor, rotation) {
+        const minFontSize = 14;
+        const baseFontSize = 25 * scaleFactor;
+        const calculatedFontSize = Math.max(minFontSize, baseFontSize); 
         const linkText = this.add.text(
             this.logo.x + offsetX * this.logo.scaleX,
             this.logo.y + offsetY * this.logo.scaleY,
             label, {
-                fontSize: 25 * scaleFactor,
+                fontSize: `${calculatedFontSize}px`,
                 fontFamily: 'Cedarville Cursive',
                 className: 'cedarville-cursive-regular',
             }
         ).setOrigin(0.5).setDepth(101).setInteractive();
-
+    
         linkText.setRotation(rotation);
     
         linkText.on('pointerover', () => {
@@ -529,5 +553,4 @@ export class MainMenu extends Scene {
         this.links = this.links || {};
         this.links[label] = linkText;
     }
-
-}
+}    

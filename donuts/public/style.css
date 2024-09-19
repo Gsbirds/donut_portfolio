@@ -398,16 +398,14 @@ footer ul {
 
 
 @media (max-width: 600px) {
-  /* .blackbox, .introbox, #projects img {
-    font-size: small;
-    padding: 3.5rem;
-    width:270px;
-  } */
-
   #game-container {
     top: 20%;
     left: 25%; 
     right: 90%; 
   }
 
+}
+
+.interactive-donut {
+  pointer-events: auto;
 }
