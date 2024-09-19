@@ -13,7 +13,8 @@ export class MainMenu extends Scene {
 
         if (window.location.pathname.includes('home')) {
             localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', false);
+            localStorage.removeItem('homeMenuClicked');
+
 
             if (isPageRefreshed) {
                 EventBus.emit('home-menu-clicked', false);
