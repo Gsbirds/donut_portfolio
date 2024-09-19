@@ -141,6 +141,8 @@ body {
 .phaser-container{
   padding-bottom: 80px;
   margin-bottom: 80px;
+  pointer-events: none;
+  z-index:1;
 }
 
 
@@ -246,13 +248,15 @@ footer ul {
   left: 67%;
   transform: translate(-50%, -50%);
   z-index: 1;
+  pointer-events: none;
 }
 
 #game-container-adjust {
   position: fixed;
   left: 47%;
   transform: translate(-50%, -210%);
-    z-index: 1;
+  z-index: 1;
+  pointer-events: none;
 }
 
 #pages{
