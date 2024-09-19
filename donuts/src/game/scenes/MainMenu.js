@@ -16,9 +16,15 @@ export class MainMenu extends Scene {
         if (currentPath.includes('home')) {
             localStorage.removeItem('donutClicked');
             EventBus.emit('home-menu-clicked', true);    
-            if (isPageRefreshed || currentPath=='https://gsbirds.github.io/donut_portfolio/') {
+            if (isPageRefreshed) {
                 EventBus.emit('home-menu-clicked', false);
             }
+        }
+
+
+        if (currentPath=='https://gsbirds.github.io/donut_portfolio/'){
+            EventBus.emit('home-menu-clicked', false);
+
         }
     
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
