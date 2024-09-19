@@ -13,7 +13,7 @@ export class MainMenu extends Scene {
     
         const currentPath = window.location.href;
     
-        if (currentPath.includes('home')) {
+        if (currentPath.includes('home') || currentPath=='https://gsbirds.github.io/donut_portfolio/') {
             localStorage.removeItem('donutClicked');
             EventBus.emit('home-menu-clicked', true);    
             if (isPageRefreshed) {
