@@ -11,8 +11,9 @@ export class MainMenu extends Scene {
 
         const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
 
-        if (window.location.pathname === '/home') {
+        if (window.location.pathname.includes('home')) {
             localStorage.removeItem('donutClicked');
+            EventBus.emit('home-menu-clicked', false);
 
             if (isPageRefreshed) {
                 EventBus.emit('home-menu-clicked', false);
@@ -23,7 +24,7 @@ export class MainMenu extends Scene {
 
         if (isDonutClicked) {
           this.showInitialClosedBox(scaleFactor)
-        } else{
+        } else {
             this.showInitialOpenBox(scaleFactor)
         }
 
@@ -155,7 +156,15 @@ export class MainMenu extends Scene {
                     url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                 } else {
                     if (donutLinks[i]=='Home'){
+
+                    this.tweens.add({
+                        targets: donut,
+                        angle: { from: 0, to: 360 },
+                        ease: 'Sine.easeInOut',
+                        onComplete: () => {
                         EventBus.emit('home-menu-clicked', true);
+                        }
+                    });
                     }
                     url = `${window.location.origin}/donut_portfolio/${donutLinks[i].toLowerCase()}`;
                 }
@@ -163,9 +172,6 @@ export class MainMenu extends Scene {
                 this.tweens.add({
                     targets: donut,
                     angle: { from: 0, to: 360 },
-                    y: { from: position.y - 50, to: position.y + 50 },
-                    duration: 600, 
-                    yoyo: true,
                     ease: 'Sine.easeInOut',
                     onComplete: () => {
                         window.location.href = url;

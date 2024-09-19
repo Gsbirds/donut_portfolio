@@ -53,6 +53,7 @@ function App() {
                     {sceneReady && <div></div>}
                 </div>
             </div>
+            <div id="pages">
             <Router>
                 <Routes>
                     <Route path="/projects" element={<Projects />} />
@@ -60,6 +61,7 @@ function App() {
                     <Route path="/contact" element={<Contact />} />
                 </Routes>
             </Router>
+            </div>
 
             {(location.pathname === '/contact' || location.pathname === '/projects' ||location.pathname === '/about') &&(
                 <footer>

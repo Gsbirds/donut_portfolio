@@ -17,6 +17,7 @@ body {
 
 #app {
   width: 100%;
+  z-index: 2;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -244,12 +245,18 @@ footer ul {
   position: fixed;
   left: 67%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 #game-container-adjust {
   position: fixed;
   left: 47%;
   transform: translate(-50%, -210%);
+    z-index: 1;
+}
+
+#pages{
+  z-index: 2; 
 }
 
 @media (min-width: 1100px) {
@@ -371,6 +378,7 @@ footer ul {
   .phaser-container{
     padding-bottom: 10px;
     margin-bottom: 10px;
+    z-index: 1; 
   }
   
 
