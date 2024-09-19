@@ -162,7 +162,6 @@ export class MainMenu extends Scene {
                         angle: { from: 0, to: 360 },
                         ease: 'Sine.easeInOut',
                         onComplete: () => {
-                        localStorage.removeItem('donutClicked');
                         EventBus.emit('home-menu-clicked', true);
                         }
                     });
