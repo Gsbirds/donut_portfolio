@@ -15,9 +15,7 @@ export class MainMenu extends Scene {
     
         if (currentPath.includes('home')) {
             localStorage.removeItem('donutClicked');
-            localStorage.removeItem('homeMenuClicked');
-            console.log('Local storage cleared');
-    
+            EventBus.emit('home-menu-clicked', false);    
             if (isPageRefreshed) {
                 EventBus.emit('home-menu-clicked', false);
             }
