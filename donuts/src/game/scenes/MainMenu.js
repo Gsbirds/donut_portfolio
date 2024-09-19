@@ -8,28 +8,30 @@ export class MainMenu extends Scene {
 
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
-
+    
         const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
-
-        if (window.location.pathname.includes('home')) {
+    
+        const currentPath = window.location.href;
+    
+        if (currentPath.includes('home')) {
             localStorage.removeItem('donutClicked');
             localStorage.removeItem('homeMenuClicked');
-
-
+            console.log('Local storage cleared');
+    
             if (isPageRefreshed) {
                 EventBus.emit('home-menu-clicked', false);
             }
         }
-
+    
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
-
+    
         if (isDonutClicked) {
-          this.showInitialClosedBox(scaleFactor)
+            this.showInitialClosedBox(scaleFactor);
         } else {
-            this.showInitialOpenBox(scaleFactor)
+            this.showInitialOpenBox(scaleFactor);
         }
-
     }
+    
 
 
     showInitialClosedBox(scaleFactor){
