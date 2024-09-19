@@ -15,7 +15,7 @@ export class MainMenu extends Scene {
     
         if (currentPath.includes('home')) {
             localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', false);    
+            EventBus.emit('home-menu-clicked', true);    
             if (isPageRefreshed) {
                 EventBus.emit('home-menu-clicked', false);
             }
