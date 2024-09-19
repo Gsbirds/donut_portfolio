@@ -269,6 +269,7 @@ footer ul {
     top: 20%;
     padding-top: 2rem;
     margin-top: 3rem;
+    left: 78%;
   }
 
 }
@@ -278,7 +279,7 @@ footer ul {
   #game-container {
     width: 80%; 
     top: 20%;
-    left: 40%; 
+    left: 30%; 
     right: 70%;
   }
   .inkpad, .inkpad2{
@@ -286,12 +287,6 @@ footer ul {
     align-items: center;
     /* margin-top: -220px;
     margin-bottom: -200px; */
-  }
-
-
-  #game-container {
-    right: 90%; 
-
   }
 
 }
@@ -384,6 +379,12 @@ footer ul {
     margin-bottom: 10px;
     z-index: 1; 
   }
+
+  #game-container {
+    top: 20%;
+    left: 30%; 
+    right: 90%; 
+  }
   
 
 }
@@ -398,9 +399,10 @@ footer ul {
 
 
 @media (max-width: 600px) {
+
   #game-container {
     top: 20%;
-    left: 25%; 
+    left: 28%; 
     right: 90%; 
   }
 
