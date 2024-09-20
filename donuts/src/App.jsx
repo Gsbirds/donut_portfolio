@@ -63,7 +63,7 @@ function App() {
             </Router>
             </div>
 
-            {(location.pathname === '/contact' || location.pathname === '/projects' ||location.pathname === '/about') &&(
+            {(window.location.pathname.includes('/contact') || window.location.pathname.includes('/projects') ||window.location.pathname.includes('/about')) &&(
                 <footer>
                     <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
                 </footer>

@@ -245,7 +245,7 @@ footer ul {
 
 #game-container {
   position: fixed;
-  left: 78%;
+  left: 68%;
   transform: translate(-50%, -50%);
   z-index: 1;
   pointer-events: none;
@@ -286,12 +286,6 @@ footer ul {
     align-items: center;
     /* margin-top: -220px;
     margin-bottom: -200px; */
-  }
-
-
-  #game-container {
-    right: 90%; 
-
   }
 
 }
@@ -414,4 +408,5 @@ footer ul {
 
 .interactive-donut {
   pointer-events: auto;
+  z-index: 1;
 }

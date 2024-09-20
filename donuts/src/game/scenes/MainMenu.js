@@ -21,7 +21,6 @@ export class MainMenu extends Scene {
             }
         }
 
-
         if (currentPath=='https://gsbirds.github.io/donut_portfolio/'){
             EventBus.emit('home-menu-clicked', false);
 
@@ -142,6 +141,7 @@ export class MainMenu extends Scene {
                 .setAlpha(0) 
                 .setInteractive({ useHandCursor: true })
                 .setName(donutLinks[i]);
+
     
             const linkText = this.add.text(position.x, position.y + textGap, donutLinks[i], {
                 fontSize: 25,
@@ -150,11 +150,13 @@ export class MainMenu extends Scene {
                 fill: '#3e4346'
             }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
     
+
+
             donut.on('pointerover', () => {
                 clearTimeout(hideDonutsTimer);
                 this.input.manager.canvas.style.cursor = 'pointer';
             });
-    
+                
             donut.on('pointerout', () => {
                 this.input.manager.canvas.style.cursor = 'default';
     
