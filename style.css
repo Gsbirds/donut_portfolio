@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   color: rgba(255, 255, 255, 0.87);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:  "Cedarville Cursive", cursive;
   background-image: url("./assets/donutwallpaper.png");
   background-size: cover;
   background-repeat: no-repeat;
@@ -82,7 +82,7 @@ body {
   background-color: #FFD1DC;
   font-size: large;
   line-height: 1.17;
-  border-radius: 25px;
+  border-radius: 35px;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   text-align: right;
 }
@@ -95,7 +95,7 @@ body {
   background-color: #FFD1DC;
   font-size: large;
   line-height: 1.17;
-  border-radius: 25px;
+  border-radius: 35px;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   margin-top: 200px;
   text-align: left;
@@ -107,7 +107,7 @@ body {
   padding-left: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  border-radius: 30px;
+  border-radius: 35px;
   background-color: #8d5f74;
   margin-right: auto;
   margin-left: auto;
@@ -123,7 +123,7 @@ body {
   padding-left: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  border-radius: 30px;
+  border-radius: 35px;
   background-color: #8d5f74;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
@@ -152,7 +152,7 @@ body {
   padding: 1rem;
   border-left: 1px solid #8d5f74;
   border-top: 1px solid #8d5f74;
-  border-radius: 25px;
+  border-radius: 35px;
   background-color: #8d5f74;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
@@ -246,6 +246,8 @@ footer ul {
 
 
 #game-container {
+  font-family:  "Cedarville Cursive", cursive;
+
   position: fixed;
   left: 68%;
   transform: translate(-50%, -50%);
@@ -254,6 +256,8 @@ footer ul {
 }
 
 #game-container-adjust {
+  font-family:  "Cedarville Cursive", cursive;
+
   position: fixed;
   left: 47%;
   transform: translate(-50%, -210%);
