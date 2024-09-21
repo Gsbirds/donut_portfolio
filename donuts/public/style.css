@@ -150,8 +150,8 @@ body {
 #projects img {
   margin: 2rem 0 4rem 0;
   padding: 1rem;
-  border-left: 1px solid #41b3a3;
-  border-top: 1px solid #41b3a3;
+  border-left: 1px solid #8d5f74;
+  border-top: 1px solid #8d5f74;
   border-radius: 25px;
   background-color: #8d5f74;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
@@ -233,7 +233,7 @@ footer ul {
 .cedarville-cursive-regular {
   font-family: "Cedarville Cursive", cursive;
   font-weight: 400;
-  font-style: normal;  // Update state
+  font-style: normal;
 }
 
 
