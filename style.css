@@ -176,6 +176,8 @@ body {
 
 #projects img:hover {
   background-color: #FFD1DC;
+  border-left: 1px solid #FFD1DC;
+  border-top: 1px solid #FFD1DC;
   transition: .30s ease-in-out;
 }
 
