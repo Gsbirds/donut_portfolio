@@ -30,34 +30,50 @@ export class MainMenu extends Scene {
     
         if (isDonutClicked) {
             this.showInitialClosedBox(scaleFactor);
+            EventBus.emit('donut-hovered', false);
+
         } else {
             this.showInitialOpenBox(scaleFactor);
         }
+
+
+        // this.checkDonutHover()
+
+        
     }
     
 
-
-    showInitialClosedBox(scaleFactor){
+    showInitialClosedBox(scaleFactor) {
+        this.checkLogoHover()
         if (window.location.pathname !== '/home') {
             EventBus.emit('home-menu-clicked', false);
         }
-
+    
         this.logo = this.add.image(120, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
         this.createSlidingDonuts(scaleFactor);
+        
         this.logo.setInteractive();
+    
         window.addEventListener('resize', () => {
             this.resizeHandler();
         });
+    
         this.logo.on('pointerover', () => {
             this.input.manager.canvas.style.cursor = 'pointer';
             this.logo.setTexture('mostlyclosed');
+            EventBus.emit('donut-hovered', true );
+
         });
+
         this.logo.on('pointerout', () => {
             this.input.manager.canvas.style.cursor = 'default';
             this.logo.setTexture('closed');
+            EventBus.emit('donut-hovered', false );
+
         });
         return;
     }
+
 
 
     showInitialOpenBox(scaleFactor){
@@ -101,6 +117,7 @@ export class MainMenu extends Scene {
             EventBus.emit('current-scene-ready', this);
             EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
         });
+
     }
     
 
@@ -119,8 +136,8 @@ export class MainMenu extends Scene {
         const maxDonutWidth = 100;
         const maxDonutHeight = 100;
 
-        const donutGap = isLargeScreen ? 5 : 20; // 5px gap if screen > 1100px, otherwise default
-        const textGap = isLargeScreen ? 70 : 50; // 70px gap if screen > 1100px, otherwise default
+        const donutGap = isLargeScreen ? 5 : 20;
+        const textGap = isLargeScreen ? 70 : 50;
     
     
         for (let i = 0; i < donutImages.length; i++) {
@@ -151,16 +168,16 @@ export class MainMenu extends Scene {
             }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
     
 
-
             donut.on('pointerover', () => {
                 clearTimeout(hideDonutsTimer);
-                this.className="pointer-enabled"
                 this.input.manager.canvas.style.cursor = 'pointer';
+                EventBus.emit('donut-hovered', true);
             });
                 
             donut.on('pointerout', () => {
                 this.input.manager.canvas.style.cursor = 'default';
-    
+                EventBus.emit('donut-hovered', false);
+
                 if (!menuStaysOut) {
                     hideDonutsTimer = setTimeout(() => {
                         this.hideDonuts(this.donuts, this.linkTexts);
@@ -200,7 +217,8 @@ export class MainMenu extends Scene {
             this.donuts.push(donut);
             this.linkTexts.push(linkText);
         }
-    
+
+        this.checkDonutHover()
         this.logo.setInteractive();
     
         this.logo.on('pointerover', () => {
@@ -233,6 +251,79 @@ export class MainMenu extends Scene {
                 menuStaysOut = true;
             }
         });
+
+    }
+
+    checkLogoHover() {
+        const pointer = this.input.activePointer;
+    
+        if (!pointer || !this.logo) {
+            return;
+        }
+    
+        const logoBounds = this.logo.getBounds();
+    
+        if (pointer.x > logoBounds.x && pointer.x < logoBounds.x + logoBounds.width &&
+            pointer.y > logoBounds.y && pointer.y < logoBounds.y + logoBounds.height) {
+    
+            if (!this.isLogoHovered) {
+                console.log('Hovering over the closed donut box');
+                EventBus.emit('donut-hovered', { name: 'Closed Donut Box', hovered: true });
+                this.isLogoHovered = true; 
+                this.input.manager.canvas.style.cursor = 'pointer'; 
+            }
+    
+            if (pointer.isDown) {
+                console.log('Closed donut box clicked');
+                EventBus.emit('donut-hovered', { name: 'Closed Donut Box', clicked: true });
+                this.handleClosedDonutBoxClick();
+            }
+        } else if (this.isLogoHovered) {
+            EventBus.emit('donut-hovered', { hovered: false });
+            this.isLogoHovered = false;
+            this.input.manager.canvas.style.cursor = 'default';
+        }
+    }
+    
+    handleClosedDonutBoxClick() {
+        console.log('Handling closed donut box click logic');
+        EventBus.emit('home-menu-clicked', true);
+    }
+    
+
+    checkDonutHover() {
+        let isHovering = false;
+        const pointer = this.input.activePointer;
+    
+        if (!pointer) {
+            return;
+        }
+    
+        for (let i = 0; i < this.donuts.length; i++) {
+            const donut = this.donuts[i];
+            const donutBounds = donut.getBounds();
+    
+            if (!donutBounds) {
+                continue;
+            }
+        
+            if (pointer.x > donutBounds.x && pointer.x < donutBounds.x + donutBounds.width &&
+                pointer.y > donutBounds.y && pointer.y < donutBounds.y + donutBounds.height) {
+                
+                if (this.hoveredDonut !== donut) {
+                    console.log('Hovering over: ', donut.name);
+                    EventBus.emit('donut-hovered', { name: donut.name, hovered: true });
+                    this.hoveredDonut = donut;
+                }
+                isHovering = true;
+                break;
+            }
+        }
+    
+        if (!isHovering && this.hoveredDonut !== null) {
+            EventBus.emit('donut-hovered', { hovered: false });
+            this.hoveredDonut = null;
+        }
     }
     
     
@@ -244,7 +335,7 @@ export class MainMenu extends Scene {
         this.scaleFactor = this.calculateScaleFactor();
         
         if (this.logo) {
-            this.logo.setScale(0.4 * this.scaleFactor);
+            this.logo.setScale(0.3 * this.scaleFactor);
         }
     
         if (this.donuts && this.donuts.length > 0) {

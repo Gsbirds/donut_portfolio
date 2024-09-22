@@ -157,6 +157,12 @@ body {
   pointer-events: none;
 }
 
+.phaser-container-hovered{
+  padding-bottom: 80px;
+  margin-bottom: 80px;
+  pointer-events:all;
+}
+
 
 
 #projects img {
@@ -263,8 +269,7 @@ footer ul {
   position: fixed;
   left: 68%;
   transform: translate(-50%, -50%);
-  z-index: 1;
-  /* pointer-events: none; */
+  z-index: 2;
 }
 
 #game-container-adjust {
@@ -273,8 +278,7 @@ footer ul {
   position: fixed;
   left: 47%;
   transform: translate(-50%, -210%);
-  z-index: 1;
-  /* pointer-events: none; */
+  z-index: 2;
 }
 
 #pages{
