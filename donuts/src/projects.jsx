@@ -195,7 +195,12 @@ function Projects() {
 
             <img className="inkpad2" src="assets/Ssssnakepad1.png"></img>
             </div>
+            <footer>
+                    <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
+            </footer>
         </div>
+
+        
     );
 }
 

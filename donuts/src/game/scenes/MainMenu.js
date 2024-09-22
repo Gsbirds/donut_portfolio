@@ -154,6 +154,7 @@ export class MainMenu extends Scene {
 
             donut.on('pointerover', () => {
                 clearTimeout(hideDonutsTimer);
+                this.className="pointer-enabled"
                 this.input.manager.canvas.style.cursor = 'pointer';
             });
                 

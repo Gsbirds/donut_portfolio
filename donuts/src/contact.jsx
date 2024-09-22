@@ -16,6 +16,8 @@ function Contact() {
   <footer>
     <h1 className="fullstack">Gabby Burgard <i id="heart" className="fa-solid fa-heart"></i> Fullstack Developer and Artist.</h1>
     <img className="inkpad" src="assets/inkpad1.png"></img>
+
+    <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
   </footer>
         </div>
         

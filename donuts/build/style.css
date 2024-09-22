@@ -15,6 +15,12 @@ body {
   background-position: center center;
 }
 
+.pointer-enabled {
+  pointer-events: auto !important;
+  z-index:2;
+}
+
+
 #app {
   width: 100%;
   z-index: 2;
@@ -76,7 +82,7 @@ body {
 
 .blackbox {
   width: 100%;
-  padding: 1rem;
+  padding: 2rem; /* Increase padding for more spacing */
   color: black;
   font-family: 'IBM Plex Mono', monospace;
   background-color: #FFD1DC;
@@ -85,7 +91,14 @@ body {
   border-radius: 35px;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   text-align: right;
+  box-sizing: border-box;
 }
+
+.blackbox p {
+  margin: 0;
+  text-align: center;
+}
+
 
 .introbox {
   width: 100%;
@@ -142,7 +155,6 @@ body {
   padding-bottom: 80px;
   margin-bottom: 80px;
   pointer-events: none;
-  z-index:1;
 }
 
 
@@ -252,7 +264,7 @@ footer ul {
   left: 68%;
   transform: translate(-50%, -50%);
   z-index: 1;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 #game-container-adjust {
@@ -262,7 +274,7 @@ footer ul {
   left: 47%;
   transform: translate(-50%, -210%);
   z-index: 1;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 #pages{
@@ -290,8 +302,6 @@ footer ul {
   .inkpad, .inkpad2{
     width:600px;
     align-items: center;
-    /* margin-top: -220px;
-    margin-bottom: -200px; */
   }
 
 }
@@ -382,7 +392,6 @@ footer ul {
   .phaser-container{
     padding-bottom: 10px;
     margin-bottom: 10px;
-    z-index: 1; 
   }
   
 
@@ -398,11 +407,6 @@ footer ul {
 
 
 @media (max-width: 600px) {
-  /* .blackbox, .introbox, #projects img {
-    font-size: small;
-    padding: 3.5rem;
-    width:270px;
-  } */
 
   #game-container {
     top: 20%;
