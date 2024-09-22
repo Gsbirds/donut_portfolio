@@ -73,7 +73,7 @@ export class MainMenu extends Scene {
         });
         return;
     }
-
+ 
 
 
     showInitialOpenBox(scaleFactor){
@@ -145,11 +145,11 @@ export class MainMenu extends Scene {
     
             const donut = this.add.image(position.x, position.y, donutImages[i]).setDepth(101);
     
-            const donutWidth = donut.width * 0.4 * scaleFactor;
-            const donutHeight = donut.height * 0.4 * scaleFactor;
+            const donutWidth = donut.width * 0.3 * scaleFactor;
+            const donutHeight = donut.height * 0.3 * scaleFactor;
     
             const adjustedDonutScaleFactor = Math.min(
-                0.4 * scaleFactor,
+                0.3 * scaleFactor,
                 maxDonutWidth / donut.width,
                 maxDonutHeight / donut.height
             );
@@ -344,7 +344,7 @@ export class MainMenu extends Scene {
             for (let i = 0; i < this.donuts.length; i++) {
                 const position = this.calculateDonutPosition(i, this.scaleFactor, isSmallScreen);
     
-                this.donuts[i].setScale(0.3 * this.scaleFactor);
+                this.donuts[i].setScale(0.23 * this.scaleFactor);
                 this.donuts[i].setPosition(position.x, position.y);
             }
     
