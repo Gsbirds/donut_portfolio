@@ -192,7 +192,7 @@ export class MainMenu extends Scene {
                 if (donutLinks[i] === 'Blog') {
                     url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';donut_portfolio
                 } else if (donutLinks[i] === 'Resume') {
-                    url = `${window.location.origin}/assets/resume.pdf`;
+                    url = `./assets/resume.pdf`;
                 } else {
                     if (donutLinks[i]=='Home'){
 
@@ -563,7 +563,7 @@ export class MainMenu extends Scene {
                         if (name === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
                         } else if (name === 'Resume') {
-                            url = `${window.location.origin}/assets/resume.pdf`;
+                            url = `./assets/resume.pdf`;
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${name.toLowerCase()}`;
                         }
@@ -638,7 +638,7 @@ export class MainMenu extends Scene {
                         if (label === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';              
                         } else if (label === 'Resume') {
-                            url = `${window.location.origin}/assets/resume.pdf`;
+                            url = `./assets/resume.pdf`;
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${label.toLowerCase()}`;
                         }

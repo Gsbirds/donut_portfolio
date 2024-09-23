@@ -185,7 +185,7 @@ li{
 .phaser-container{
   padding-bottom: 80px;
   margin-bottom: 80px;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .phaser-container-hovered{
