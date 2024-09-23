@@ -113,7 +113,7 @@ li{
 
 .blackbox {
   width: 100%;
-  padding: 2rem; /* Increase padding for more spacing */
+  padding: 2rem;
   color: black;
   font-family: 'IBM Plex Mono', monospace;
   background-color: #FFD1DC;
@@ -304,7 +304,6 @@ footer ul {
 
 #game-container-adjust {
   font-family:  "Cedarville Cursive", cursive;
-
   position: fixed;
   left: 47%;
   transform: translate(-50%, -210%);
@@ -379,6 +378,15 @@ footer ul {
 
   }
 
+
+ #game-container-adjust {
+    font-family:  "Cedarville Cursive", cursive;
+    position: fixed;
+    left: 67%;
+    transform: translate(-50%, -210%);
+    z-index: 2;
+  }
+
   
 }
 
@@ -421,6 +429,14 @@ footer ul {
   .inkpad2{
     padding-left: 60px;
     padding-bottom: 20px;
+  }
+
+  #game-container-adjust {
+    font-family:  "Cedarville Cursive", cursive;
+    position: fixed;
+    left: 67%;
+    transform: translate(-50%, -210%);
+    z-index: 2;
   }
 
 }
