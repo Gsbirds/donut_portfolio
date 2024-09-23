@@ -462,7 +462,7 @@ footer ul {
   #game-container-adjust {
     font-family:  "Cedarville Cursive", cursive;
     position: fixed;
-    left: 97%;
+    left: 107%;
     transform: translate(-50%, -210%);
     z-index: 2;
   }
