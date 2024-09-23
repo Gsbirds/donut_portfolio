@@ -382,7 +382,7 @@ footer ul {
  #game-container-adjust {
     font-family:  "Cedarville Cursive", cursive;
     position: fixed;
-    left: 67%;
+    left: 77%;
     transform: translate(-50%, -210%);
     z-index: 2;
   }
@@ -402,7 +402,7 @@ footer ul {
   #contact{
     width:270px;
 
-  }
+  }donut_portfolio
 
   .fullstack{
     width: 270px;
@@ -434,7 +434,7 @@ footer ul {
   #game-container-adjust {
     font-family:  "Cedarville Cursive", cursive;
     position: fixed;
-    left: 67%;
+    left: 77%;
     transform: translate(-50%, -210%);
     z-index: 2;
   }
