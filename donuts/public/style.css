@@ -382,7 +382,7 @@ footer ul {
  #game-container-adjust {
     font-family:  "Cedarville Cursive", cursive;
     position: fixed;
-    left: 77%;
+    left: 67%;
     transform: translate(-50%, -210%);
     z-index: 2;
   }
@@ -456,6 +456,15 @@ footer ul {
     top: 20%;
     left: 25%; 
     right: 90%; 
+  }
+
+
+  #game-container-adjust {
+    font-family:  "Cedarville Cursive", cursive;
+    position: fixed;
+    left: 97%;
+    transform: translate(-50%, -210%);
+    z-index: 2;
   }
 
 }
