@@ -106,12 +106,14 @@ export class MainMenu extends Scene {
             this.createInteractiveZoneRelativeToLogo(100, 200, 75 * calculatedScale, 'Projects', 'second-donut');
             this.createInteractiveZoneRelativeToLogo(250, 200, 75 * calculatedScale, 'About', 'third-donut');
             this.createInteractiveZoneRelativeToLogo(100, 300, 75 * calculatedScale, 'Contact', 'fourth-donut');
+            this.createInteractiveZoneRelativeToLogo(250, 300, 75 * calculatedScale, 'Resume', 'fifth-donut');
             this.createInteractiveZoneRelativeToLogo(400, 300, 75 * calculatedScale, 'Blog', 'sixth-donut');
     
             this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', calculatedScale, Phaser.Math.DegToRad(-19));
             this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', calculatedScale, Phaser.Math.DegToRad(-19));
             this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', calculatedScale, Phaser.Math.DegToRad(-19));
             this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
+            this.createLinkRelativeToLogo(250, 290, 'Resume', 'fifth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
             this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
     
             EventBus.emit('current-scene-ready', this);
@@ -123,8 +125,8 @@ export class MainMenu extends Scene {
 
    
     createSlidingDonuts(scaleFactor) {
-        const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut'];
-        const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Blog'];
+        const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut', 'choco-donut'];
+        const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Blog', 'Resume'];
     
         this.donuts = [];
         this.linkTexts = [];
@@ -188,7 +190,9 @@ export class MainMenu extends Scene {
             donut.on('pointerdown', () => {
                 let url;
                 if (donutLinks[i] === 'Blog') {
-                    url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+                    url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';donut_portfolio
+                } else if (donutLinks[i] === 'Resume') {
+                    url = `${window.location.origin}/assets/resume.pdf`;
                 } else {
                     if (donutLinks[i]=='Home'){
 
@@ -523,7 +527,7 @@ export class MainMenu extends Scene {
         zone.on('pointerdown', () => {
             let spriteName;
     
-            if (name === 'Home' || name === 'Art') {
+            if (name === 'Home' || name === 'Resume') {
                 spriteName = 'pink-donut';
             } else if (name === 'Projects' || name === 'Blog') {
                 spriteName = 'blue-donut';
@@ -558,6 +562,8 @@ export class MainMenu extends Scene {
                         let url = '';
                         if (name === 'Blog') {
                             url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+                        } else if (name === 'Resume') {
+                            url = `${window.location.origin}/assets/resume.pdf`;
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${name.toLowerCase()}`;
                         }
@@ -602,7 +608,7 @@ export class MainMenu extends Scene {
     
         linkText.on('pointerdown', () => {
             let spriteName;
-            if (label === 'Home' || label === 'Art') {
+            if (label === 'Home' || label === 'Resume') {
                 spriteName = 'pink-donut';
             } else if (label === 'Projects' || label === 'Blog') {
                 spriteName = 'blue-donut';
@@ -630,7 +636,9 @@ export class MainMenu extends Scene {
                     onComplete: () => {
                         let url;
                         if (label === 'Blog') {
-                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';              
+                        } else if (label === 'Resume') {
+                            url = `${window.location.origin}/assets/resume.pdf`;
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${label.toLowerCase()}`;
                         }

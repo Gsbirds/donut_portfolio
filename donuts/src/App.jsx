@@ -66,6 +66,11 @@ function App() {
                     />
                     {sceneReady && <div></div>}
                 </div>
+                <ul class="icon-container">
+                <li><a href="https://www.linkedin.com/in/gabby-burgard-14924abb/"><i class="fa-brands fa-linkedin"></i></a></li>
+                <li><a href="https://github.com/Gsbirds"><i class="fa-brands fa-github"></i></a></li>
+                </ul>
+
             </div>
             <div id="pages">
                 <Router>

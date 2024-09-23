@@ -15,12 +15,6 @@ body {
   background-position: center center;
 }
 
-.pointer-enabled {
-  pointer-events: auto !important;
-  z-index:2;
-}
-
-
 #app {
   width: 100%;
   z-index: 2;
@@ -42,10 +36,47 @@ body {
   margin: auto;
 }
 
+.icon-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 15px;
+  z-index: 1000;
+  list-style: none;
+  padding: 0;
+  margin: 0
+}
+
+.icon-container li {
+  display: inline-block;
+}
+
+.fa-brands {
+  color: #8d5f74;
+  font-size: 35px;
+  text-decoration: none;
+}
+
+.fa-brands:hover {
+  color: #FFD1DC;
+}
+
+
+li{
+  list-style-type: none;
+  gap:5px;
+
+}
+
 .project-title {
   padding-top: 1rem;
   text-align: left;
-  color: #8d5f74;
+  color: #8d5f74;.fa-brands{
+    color: #8d5f74;
+    padding-left: 5px;
+    font-size: 35px;
+  }
   font-family: 'IBM Plex Mono', monospace;
 }
 
@@ -154,7 +185,7 @@ body {
 .phaser-container{
   padding-bottom: 80px;
   margin-bottom: 80px;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .phaser-container-hovered{
@@ -265,7 +296,6 @@ footer ul {
 
 #game-container {
   font-family:  "Cedarville Cursive", cursive;
-
   position: fixed;
   left: 68%;
   transform: translate(-50%, -50%);
@@ -392,12 +422,6 @@ footer ul {
     padding-left: 60px;
     padding-bottom: 20px;
   }
-
-  .phaser-container{
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-  }
-  
 
 }
 
