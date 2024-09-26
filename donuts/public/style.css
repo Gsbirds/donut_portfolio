@@ -176,8 +176,6 @@ li{
   color: black;
 }
 
-
-
 .d-block {
   width: 900px;
 }
@@ -287,8 +285,6 @@ footer ul {
   font-style: normal;
 }
 
-
-
 .projects-padding{
   padding-top: 8rem;
 }
@@ -296,7 +292,7 @@ footer ul {
 
 #game-container {
   font-family:  "Cedarville Cursive", cursive;
-  position: fixed;
+  position:absolute;
   left: 68%;
   transform: translate(-50%, -50%);
   z-index: 2;
