@@ -225,7 +225,7 @@ export class MainMenu extends Scene {
         this.checkDonutHover()
         this.logo.setInteractive();
     
-        this.logo.on('pointerover', () => {
+        this.logo.on('pointerdown', () => {
             clearTimeout(hideDonutsTimer);
             this.input.manager.canvas.style.cursor = 'pointer';
             if (!menuStaysOut) {
