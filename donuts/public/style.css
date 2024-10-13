@@ -13,6 +13,8 @@ body {
   min-height: 100vh;
   padding-bottom: 20px;
   background-position: center center;
+  overflow-x: hidden;
+
 }
 
 #app {
@@ -289,13 +291,13 @@ footer ul {
   padding-top: 8rem;
 }
 
-
 #game-container {
   font-family:  "Cedarville Cursive", cursive;
   position:absolute;
   left: 68%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 1;
+  position:absolute;
 }
 
 #game-container-adjust {
@@ -303,7 +305,7 @@ footer ul {
   position: fixed;
   left: 47%;
   transform: translate(-50%, -210%);
-  z-index: 2;
+  z-index: 1;
 }
 
 #pages{
@@ -327,6 +329,8 @@ footer ul {
     top: 20%;
     left: 40%; 
     right: 70%;
+    position:absolute;
+
   }
   .inkpad, .inkpad2{
     width:600px;
@@ -368,10 +372,10 @@ footer ul {
 
 
   #game-container {
-    /* position: fixed; */
-    top: 15%;
+    top: 20%;
     left: 35%; 
     right: 90%; 
+    position:absolute;
 
   }
 
@@ -381,7 +385,7 @@ footer ul {
     position: fixed;
     left: 67%;
     transform: translate(-50%, -210%);
-    z-index: 2;
+    z-index: 1;
   }
 
    
@@ -399,7 +403,7 @@ footer ul {
   #contact{
     width:270px;
 
-  }donut_portfolio
+  }
 
   .fullstack{
     width: 270px;
@@ -428,18 +432,22 @@ footer ul {
     padding-bottom: 20px;
   }
 
-  
-  #game-container {
-    position:fixed;
-  }
-
   #game-container-adjust {
     font-family:  "Cedarville Cursive", cursive;
     position: fixed;
     left: 77%;
     transform: translate(-50%, -210%);
-    z-index: 2;
+    z-index: 1;
   }
+
+  #game-container {
+    top: 54%;
+    left: 40%; 
+    right: 90%; 
+    overflow: hidden;
+    min-height:750px;
+  }
+
 
 }
 
@@ -455,8 +463,8 @@ footer ul {
 @media (max-width: 600px) {
 
   #game-container {
-    top: 20%;
-    left: 25%; 
+    top: 54%;
+    left: 36%; 
     right: 90%; 
   }
 
@@ -466,7 +474,7 @@ footer ul {
     position: fixed;
     left: 107%;
     transform: translate(-50%, -210%);
-    z-index: 2;
+    z-index: 1;
   }
 
 }

@@ -361,7 +361,11 @@ export class MainMenu extends Scene {
     
     
     calculateDonutPosition(i, scaleFactor, isSmallScreen, donutGap) {
-        const xPosition = isSmallScreen ? 100 : 250 + (i * 125 + donutGap);
+        let gapAdd=125
+        if (window.innerWidth < 901 && window.innerWidth>768){
+            gapAdd=98
+        }
+        const xPosition = isSmallScreen ? 100 : 250 + (i * gapAdd + donutGap);
         const yPosition = isSmallScreen ? 150 + (i * 100 * scaleFactor) : 100 * scaleFactor;
         return { x: xPosition, y: yPosition };
     }
