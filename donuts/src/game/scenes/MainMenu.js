@@ -572,6 +572,10 @@ export class MainMenu extends Scene {
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${name.toLowerCase()}`;
                         }
+
+                        this.tweens.killAll();
+                        this.anims.pauseAll();
+            
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
                     }
@@ -647,6 +651,10 @@ export class MainMenu extends Scene {
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${label.toLowerCase()}`;
                         }
+
+
+                        this.tweens.killAll();
+                        this.anims.pauseAll();
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
                     }
