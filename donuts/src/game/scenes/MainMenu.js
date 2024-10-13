@@ -139,7 +139,7 @@ export class MainMenu extends Scene {
         const maxDonutHeight = 100;
 
         const donutGap = isLargeScreen ? 5 : 20;
-        const textGap = isLargeScreen ? 70 : 50;
+        const textGap = isLargeScreen ? 95 : 50;
     
     
         for (let i = 0; i < donutImages.length; i++) {
@@ -163,7 +163,8 @@ export class MainMenu extends Scene {
 
     
             const linkText = this.add.text(position.x, position.y + textGap, donutLinks[i], {
-                fontSize: 25,
+                fontSize: 20,
+                fontStyle: 'bold',
                 fontFamily: 'Cedarville Cursive',
                 className: 'cedarville-cursive-regular',
                 fill: '#3e4346'
