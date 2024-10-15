@@ -8,26 +8,21 @@ export class MainMenu extends Scene {
 
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
-    
-        const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
         const currentPath = window.location.href;
-    
-        
-        if (currentPath.includes('home') || currentPath=='https://gsbirds.github.io/donut_portfolio/#/home') {
-            localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', true);
-            if (isPageRefreshed) {
-                localStorage.removeItem('donutClicked');
-                EventBus.emit('home-menu-clicked', false);
-            }
-        }
-    
-        if (currentPath == 'https://gsbirds.github.io/donut_portfolio/') {
-            EventBus.emit('home-menu-clicked', false);
-        }
-    
+
+        this.handlePathChange(currentPath, performance.navigation.type === performance.navigation.TYPE_RELOAD);
+
+        window.addEventListener('popstate', () => {
+            const newPath = window.location.href;
+            this.handlePathChange(newPath, false);
+        });
+
+        window.addEventListener('hashchange', () => {
+            const newPath = window.location.href;
+            this.handlePathChange(newPath, false); 
+        });
+
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
-    
         if (isDonutClicked) {
             this.showInitialClosedBox(scaleFactor);
             EventBus.emit('donut-hovered', false);
@@ -35,6 +30,23 @@ export class MainMenu extends Scene {
             this.showInitialOpenBox(scaleFactor);
         }
     }
+
+    handlePathChange(currentPath, isPageRefreshed) {
+        if (currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home') {
+            localStorage.removeItem('donutClicked');
+            EventBus.emit('home-menu-clicked', true);
+            if (isPageRefreshed) {
+                localStorage.removeItem('donutClicked');
+                EventBus.emit('home-menu-clicked', false);
+            }
+        }
+
+        if (currentPath === 'https://gsbirds.github.io/donut_portfolio/') {
+            localStorage.removeItem('donutClicked');
+            EventBus.emit('home-menu-clicked', false);
+        }
+    }
+
     
 
     showInitialClosedBox(scaleFactor) {
