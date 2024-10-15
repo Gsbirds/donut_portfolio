@@ -17,10 +17,11 @@ function Info() {
         </p>
         <img class="inkpad2" src="assets/Inpkad2edit.png"></img>
 
-        </div>
         <footer>
                     <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
           </footer>
+          
+        </div>
         </div>
         
     );

@@ -10,20 +10,20 @@ export class MainMenu extends Scene {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
     
         const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
-    
         const currentPath = window.location.href;
+    
     
         if (currentPath.includes('home')) {
             localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', true);    
+            EventBus.emit('home-menu-clicked', true);
             if (isPageRefreshed) {
+                localStorage.removeItem('donutClicked');
                 EventBus.emit('home-menu-clicked', false);
             }
         }
-
-        if (currentPath=='https://gsbirds.github.io/donut_portfolio/'){
+    
+        if (currentPath == 'https://gsbirds.github.io/donut_portfolio/') {
             EventBus.emit('home-menu-clicked', false);
-
         }
     
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
@@ -31,15 +31,9 @@ export class MainMenu extends Scene {
         if (isDonutClicked) {
             this.showInitialClosedBox(scaleFactor);
             EventBus.emit('donut-hovered', false);
-
         } else {
             this.showInitialOpenBox(scaleFactor);
         }
-
-
-        // this.checkDonutHover()
-
-        
     }
     
 
@@ -574,7 +568,6 @@ export class MainMenu extends Scene {
                         }
 
                         this.tweens.killAll();
-                        this.anims.pauseAll();
             
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
@@ -654,7 +647,6 @@ export class MainMenu extends Scene {
 
 
                         this.tweens.killAll();
-                        this.anims.pauseAll();
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
                     }
