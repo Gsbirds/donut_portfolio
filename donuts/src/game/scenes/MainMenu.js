@@ -571,6 +571,10 @@ export class MainMenu extends Scene {
             
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
+                        if (currentPath.includes('home')) {
+                            localStorage.removeItem('donutClicked');
+                            EventBus.emit('home-menu-clicked', true);
+                        }
                     }
                 });
             });
@@ -649,6 +653,10 @@ export class MainMenu extends Scene {
                         this.tweens.killAll();
                         window.location.href = url;
                         EventBus.emit('donut-clicked', true);
+                        if (currentPath.includes('home')) {
+                            localStorage.removeItem('donutClicked');
+                            EventBus.emit('home-menu-clicked', true);
+                        }
                     }
                 });
             });
