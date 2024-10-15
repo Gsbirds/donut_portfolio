@@ -12,8 +12,8 @@ export class MainMenu extends Scene {
         const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
         const currentPath = window.location.href;
     
-    
-        if (currentPath.includes('home')) {
+        
+        if (currentPath.includes('home') || currentPath=='https://gsbirds.github.io/donut_portfolio/#/home') {
             localStorage.removeItem('donutClicked');
             EventBus.emit('home-menu-clicked', true);
             if (isPageRefreshed) {
