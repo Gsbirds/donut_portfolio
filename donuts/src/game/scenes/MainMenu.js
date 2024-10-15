@@ -567,16 +567,15 @@ export class MainMenu extends Scene {
                             url = `${window.location.origin}/donut_portfolio/${name.toLowerCase()}`;
                         }
 
-                        this.tweens.killAll();
-            
-                        window.location.href = url;
                         if (name === 'Home') {
-                            EventBus.emit('donut-clicked', false);
+                            localStorage.removeItem('donutClicked');
 
                         }else {
                             EventBus.emit('donut-clicked', true);
  
                         }
+
+                        window.location.href = url;
                     
                     }
                 });
@@ -651,16 +650,13 @@ export class MainMenu extends Scene {
                         } else {
                             url = `${window.location.origin}/donut_portfolio/${label.toLowerCase()}`;
                         }
-
-
-                        this.tweens.killAll();
-                        window.location.href = url;
                         if (label === 'Home') {
-                            EventBus.emit('donut-clicked', false);
+                            localStorage.removeItem('donutClicked');
 
                         } else {
                             EventBus.emit('donut-clicked', true);
                         }
+                        window.location.href = url;
                     }
                 });
             });
