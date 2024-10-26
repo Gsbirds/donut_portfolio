@@ -208,7 +208,7 @@ export class MainMenu extends Scene {
                         angle: { from: 0, to: 360 },
                         ease: 'Sine.easeInOut',
                         onComplete: () => {
-                        EventBus.emit('home-menu-clicked', true);
+                        // EventBus.emit('home-menu-clicked', true);
                         }
                     });
                     }
