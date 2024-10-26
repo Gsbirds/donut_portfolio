@@ -32,7 +32,7 @@ export class MainMenu extends Scene {
     }
 
     handlePathChange(currentPath, isPageRefreshed) {
-        if (currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home') {
+        if (currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home' || currentPath === 'https://gsbirds.github.io/donut_portfolio/') {
             localStorage.removeItem('donutClicked');
             EventBus.emit('home-menu-clicked', true);
             if (isPageRefreshed) {
