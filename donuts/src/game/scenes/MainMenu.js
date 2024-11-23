@@ -9,17 +9,12 @@ export class MainMenu extends Scene {
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
     
-        const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
         const currentPath = window.location.href;
     
         
         if (currentPath.includes('home') || currentPath=='https://gsbirds.github.io/donut_portfolio/#/home') {
             localStorage.removeItem('donutClicked');
             EventBus.emit('home-menu-clicked', false);
-            // if (isPageRefreshed) {
-            //     localStorage.removeItem('donutClicked');
-            //     EventBus.emit('home-menu-clicked', false);
-            // }
         }
     
         if (currentPath == 'https://gsbirds.github.io/donut_portfolio/') {
