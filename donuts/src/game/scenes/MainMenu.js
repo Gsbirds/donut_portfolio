@@ -8,21 +8,28 @@ export class MainMenu extends Scene {
 
     create() {
         const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
+    
+        const isPageRefreshed = performance.navigation.type === performance.navigation.TYPE_RELOAD;
         const currentPath = window.location.href;
+    
+        
+        if (currentPath.includes('home') || currentPath=='https://gsbirds.github.io/donut_portfolio/#/home') {
+            localStorage.removeItem('donutClicked');
+            EventBus.emit('home-menu-clicked', false);
+            // if (isPageRefreshed) {
+            //     localStorage.removeItem('donutClicked');
+            //     EventBus.emit('home-menu-clicked', false);
+            // }
+        }
+    
+        if (currentPath == 'https://gsbirds.github.io/donut_portfolio/') {
+            localStorage.removeItem('donutClicked');
 
-        this.handlePathChange(currentPath, performance.navigation.type === performance.navigation.TYPE_RELOAD);
-
-        window.addEventListener('popstate', () => {
-            const newPath = window.location.href;
-            this.handlePathChange(newPath, false);
-        });
-
-        window.addEventListener('hashchange', () => {
-            const newPath = window.location.href;
-            this.handlePathChange(newPath, false); 
-        });
-
+            EventBus.emit('home-menu-clicked', false);
+        }
+    
         const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
+    
         if (isDonutClicked) {
             this.showInitialClosedBox(scaleFactor);
             EventBus.emit('donut-hovered', false);
@@ -30,23 +37,6 @@ export class MainMenu extends Scene {
             this.showInitialOpenBox(scaleFactor);
         }
     }
-
-    handlePathChange(currentPath, isPageRefreshed) {
-        if (currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home' || currentPath === 'https://gsbirds.github.io/donut_portfolio/') {
-            localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', false);
-            if (isPageRefreshed) {
-                localStorage.removeItem('donutClicked');
-                EventBus.emit('home-menu-clicked', false);
-            }
-        }
-
-        if (currentPath === 'https://gsbirds.github.io/donut_portfolio/') {
-            localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', false);
-        }
-    }
-
     
 
     showInitialClosedBox(scaleFactor) {
@@ -208,9 +198,12 @@ export class MainMenu extends Scene {
                         angle: { from: 0, to: 360 },
                         ease: 'Sine.easeInOut',
                         onComplete: () => {
-                        // EventBus.emit('home-menu-clicked', true);
+                        EventBus.emit('home-menu-clicked', true);
                         }
                     });
+                    localStorage.removeItem('donutClicked');
+                    EventBus.emit('home-menu-clicked', false);
+
                     }
                     url = `${window.location.origin}/donut_portfolio/${donutLinks[i].toLowerCase()}`;
                 }
