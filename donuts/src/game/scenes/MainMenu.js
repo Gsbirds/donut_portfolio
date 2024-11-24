@@ -215,6 +215,19 @@ export class MainMenu extends Scene {
 
                     }
                     url = `${window.location.origin}/donut_portfolio/${donutLinks[i].toLowerCase()}`;
+
+                    const isHomePage = currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home';
+                    const isMobile = window.innerWidth <= 768;
+                
+                    if (isHomePage && isMobile) {
+                        const gameContainer = document.getElementById('game-container');
+                        if (gameContainer) {
+                            gameContainer.style.top = '24%';
+                            gameContainer.style.left = '54%';
+                            gameContainer.style.right = '90%';
+                            gameContainer.style.width = '140%';
+                        }
+                    }
                 }
     
                 this.tweens.add({
