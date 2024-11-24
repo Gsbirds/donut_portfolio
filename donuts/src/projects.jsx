@@ -16,7 +16,7 @@ function Projects() {
                                 available and understandable information about their own healthcare options. I used web sockets to add a
                                 chat feature as well. I deployed this on heroku, see the first link below.
                                 <a className="link" href="https://glacial-shore-69830-91298bf010bb.herokuapp.com/">Reproductive Health Policy</a>
-                                <a className="link" href="https://github.com/Gsbirds/ReproductiveHealth2">https://github.com/Gsbirds/ReproductiveHealthPolicy2</a>
+                                <a className="link" href="https://github.com/Gsbirds/ReproductiveHealthPolicy2">https://github.com/Gsbirds/ReproductiveHealthPolicy2</a>
                             </p>
                             <h4 className="tech">Technologies used include:</h4>
                             <ul>
