@@ -275,10 +275,11 @@ footer ul {
 }
 
 .inkpad2 {
-  width: 800px;
+  width: 600px;
   align-items: center;
-  margin-top: -220px;
-  margin-bottom: -200px;
+  margin-top: -80px;
+  margin-bottom: -100px;
+  padding-left: 250px;
 }
 
 .cedarville-cursive-regular {
@@ -337,6 +338,11 @@ footer ul {
     align-items: center;
   }
 
+  .inkpad2{
+    margin-top: -80px;
+    margin-bottom: -100px;
+    padding-left: 250px;
+  }
 }
 
 
@@ -353,7 +359,7 @@ footer ul {
   }
 
   .inkpad, .inkpad2{
-    width:700px;
+    width:400px;
     align-items: center;
     margin-top: .5rem;
   }
@@ -361,6 +367,7 @@ footer ul {
   .inkpad2{
     padding-left: 100px;
     padding-bottom: 20px;
+    padding-top: 50px;
   }
 
   .worked {
@@ -419,17 +426,16 @@ footer ul {
     text-align: center;
 
   }
-
   .inkpad, .inkpad2{
     width:400px;
     align-items: center;
     margin-top: .5rem;
-
   }
 
   .inkpad2{
-    padding-left: 60px;
+    padding-left: 120px;
     padding-bottom: 20px;
+    padding-top: 50px;
   }
 
   #game-container-adjust {
