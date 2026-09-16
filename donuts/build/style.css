@@ -182,10 +182,6 @@ li{
   width: 900px;
 }
 
-.phaser-container {
-  pointer-events: auto;
-}
-
 
 
 #projects img {
@@ -249,11 +245,16 @@ footer ul {
   outline: none;
   background-color: #e79fa8;
   color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 30px;
   width: 120px;
   height: 30px;
   font-size: .90rem;
   border: 2px solid black;
+  cursor: pointer;
   box-shadow: 0 10px 14px 0 rgba(0, 0, 0, 0.24), 0 15px 48px 0 rgba(0, 0, 0, 0.19);
 }
 
@@ -284,8 +285,6 @@ footer ul {
   padding-top: 9rem;
 }
 
-/* Fixed, top-centred canvas host. Phaser FITs the world into it and rescales
-   on resize; pointer-events pass through so the page scrolls underneath. */
 #game-container {
   font-family: "Cedarville Cursive", cursive;
   position: fixed;
@@ -298,10 +297,15 @@ footer ul {
   pointer-events: none;
 }
 
-/* Donuts stay clickable; pan-y lets vertical scroll pass through to the page. */
 #game-container canvas {
   pointer-events: auto;
   touch-action: pan-y;
+}
+
+/* Content routes: clip the canvas to the top menu band so the page below is
+   clickable; home keeps the full canvas. */
+.phaser-container--page #game-container canvas {
+  clip-path: inset(0 0 65% 0);
 }
 
 #pages {

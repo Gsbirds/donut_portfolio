@@ -1,49 +1,31 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { PhaserGame } from './game/PhaserGame';
-import { EventBus } from './game/EventBus';
 import Projects from './projects';
 import Info from './info';
 import Contact from './contact';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
-/** Normalise the mixed boolean/object payloads emitted for donut-hovered. */
-const isHovered = (payload) =>
-    typeof payload === 'object' && payload !== null ? Boolean(payload.hovered) : Boolean(payload);
+const CONTENT_ROUTES = ['projects', 'about', 'contact'];
+const onContentRoute = () => CONTENT_ROUTES.some((r) => window.location.hash.includes(r));
 
 function App() {
     const phaserRef = useRef();
+    const [contentRoute, setContentRoute] = useState(onContentRoute());
 
-    // Single source of truth for state shared between React and Phaser.
+    // Content routes clip the canvas to the top menu band so the page below
+    // stays clickable; home keeps the full canvas.
     useEffect(() => {
-        const handleDonutClicked = (clicked) => {
-            localStorage.setItem('donutClicked', JSON.stringify(clicked));
-        };
-
-        const handleHomeMenuClicked = (clicked) => {
-            localStorage.setItem('homeMenuClicked', JSON.stringify(clicked));
-        };
-
-        const handleDonutHovered = (payload) => {
-            localStorage.setItem('donutHovered', JSON.stringify(isHovered(payload)));
-        };
-
-        EventBus.on('donut-clicked', handleDonutClicked);
-        EventBus.on('home-menu-clicked', handleHomeMenuClicked);
-        EventBus.on('donut-hovered', handleDonutHovered);
-
-        return () => {
-            EventBus.off('donut-clicked', handleDonutClicked);
-            EventBus.off('home-menu-clicked', handleHomeMenuClicked);
-            EventBus.off('donut-hovered', handleDonutHovered);
-        };
+        const sync = () => setContentRoute(onContentRoute());
+        window.addEventListener('hashchange', sync);
+        return () => window.removeEventListener('hashchange', sync);
     }, []);
 
     return (
         <div>
             <div id="app">
-                <div className="phaser-container">
+                <div className={contentRoute ? 'phaser-container phaser-container--page' : 'phaser-container'}>
                     <PhaserGame ref={phaserRef} />
                 </div>
                 <ul className="icon-container">

@@ -4,9 +4,7 @@ function Contact() {
             <section id="contact">
                 <h2>Contact me</h2>
                 <p className="message">I&apos;d love to hear your thoughts!</p>
-                <button className="contact_btn" type="button">
-                    <a href="mailto:gabbyburgard@the-gabby.com">Contact me</a>
-                </button>
+                <a className="contact_btn" href="mailto:gabbyburgard@the-gabby.com">Contact me</a>
             </section>
 
             <footer>

@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { EventBus } from '../EventBus';
 import { isHomeUrl, navigateToDestination } from '../routing';
 import {
     MENU_ITEMS,
@@ -32,8 +31,6 @@ export function buildOpenBox(scene) {
     scene.logo = scene.add.image(logoX, logoY, 'logo').setDepth(100).setScale(scale);
 
     MENU_ITEMS.forEach((item) => createLink(scene, item, scale));
-
-    EventBus.emit('logo-position', { x: scene.logo.x, y: scene.logo.y });
 }
 
 function createLink(scene, item, scale) {
@@ -77,7 +74,6 @@ function createLink(scene, item, scale) {
     });
 
     scene.linkTexts.push(linkText);
-    scene.links[item.label] = linkText;
 }
 
 function selectOpenBoxItem(scene, item) {

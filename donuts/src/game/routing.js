@@ -7,8 +7,6 @@ const BLOG_URL = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
 export const isHomeUrl = () =>
     !CONTENT_ROUTES.some((route) => window.location.hash.includes(route));
 
-// Resolve a menu selection to navigation. Hash routes resolve the same on
-// localhost and the GitHub Pages base path.
 export function navigateToDestination(name) {
     if (name === 'Blog') {
         EventBus.emit('donut-clicked', true);

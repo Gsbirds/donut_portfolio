@@ -18,7 +18,6 @@ export class MainMenu extends Scene {
         this.logo = null;
         this.donuts = [];
         this.linkTexts = [];
-        this.links = {};
         this._pressedLink = null;
         this._hideDonutsTimer = null;
         this._menuStaysOut = false;
