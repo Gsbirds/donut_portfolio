@@ -284,28 +284,24 @@ footer ul {
   padding-top: 9rem;
 }
 
-/*
- * The game canvas is a fixed, top-centred host. The Phaser Scale manager
- * (FIT + CENTER_BOTH) scales the fixed-resolution world to fit this host and
- * recomputes on every resize, so the menu grows and shrinks with the screen
- * on desktop and mobile alike. The host is sized (not full-viewport) so it
- * never blankets the page: content routes simply flow below it.
- */
+/* Fixed, top-centred canvas host. Phaser FITs the world into it and rescales
+   on resize; pointer-events pass through so the page scrolls underneath. */
 #game-container {
   font-family: "Cedarville Cursive", cursive;
   position: fixed;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: min(100vw, 900px);
+  width: min(100vw, 1024px);
   height: min(100dvh, 900px);
   z-index: 3;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
-/* Let taps reach the game instead of triggering browser scroll/zoom gestures. */
+/* Donuts stay clickable; pan-y lets vertical scroll pass through to the page. */
 #game-container canvas {
-  touch-action: none;
+  pointer-events: auto;
+  touch-action: pan-y;
 }
 
 #pages {
