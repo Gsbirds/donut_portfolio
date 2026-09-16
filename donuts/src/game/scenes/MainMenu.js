@@ -247,16 +247,27 @@ export class MainMenu extends Scene {
                 useHandCursor: true,
             });
 
+            const baseTextColor = '#3e4346';
             const linkText = this.add.text(position.x, position.y + this.textGap, item.label, {
                 fontSize: 20,
                 fontStyle: 'bold',
                 fontFamily: 'Cedarville Cursive',
-                fill: '#3e4346',
+                fill: baseTextColor,
             })
                 .setOrigin(0.5)
                 .setDepth(102)
                 .setAlpha(0)
                 .setInteractive({ useHandCursor: true });
+
+            linkText.on('pointerover', () => {
+                this.setCursorStyle('pointer');
+                linkText.setStyle({ fill: LINK_HOVER_COLOR });
+            });
+
+            linkText.on('pointerout', () => {
+                this.setCursorStyle('default');
+                linkText.setStyle({ fill: baseTextColor });
+            });
 
             linkText.on('pointerup', () => this.navigateToDestination(item.label));
 
