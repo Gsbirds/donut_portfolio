@@ -3,7 +3,7 @@ function Projects() {
     return (
         <div className="parallax">
             <div className="projects-padding"> 
-            <h2 className="worked"><b>Projects I've worked on</b></h2>
+            <h2 className="worked"><b>Projects I&apos;ve worked on</b></h2>
             <section className="section-blue">
                 <section id="projects">
                     <article>
@@ -102,7 +102,7 @@ function Projects() {
                             <h4 className="project-title">Checkit</h4>
                             <p className="blackbox">
                                 For our final project at Hack Reactor, my group and I developed this fact-checking website
-                                using Google's fact-checker API, FastAPI, and React. I am particularly proud of this project because we also
+                                using Google&apos;s fact-checker API, FastAPI, and React. I am particularly proud of this project because we also
                                 implemented the ability to log in and save your claims that you have fact-checked under specific categories.
                                 <a className="link" href="https://gitlab.com/team-dogge/module3-project-gamma">https://gitlab.com/team-dogge/module3-project-gamma</a>
                             </p>
@@ -193,10 +193,10 @@ function Projects() {
                 </section>
             </section>
 
-            <img className="inkpad2" src="assets/Ssssnakepad1.png"></img>
+            <img className="inkpad2" src="assets/Ssssnakepad1.png" alt="snake ink pad illustration" />
             </div>
             <footer>
-                    <p><i className="fa-solid fa-copyright"></i><b> 2024 Gabrielle Burgard. All Rights Reserved.</b></p>
+                    <p><i className="fa-solid fa-copyright"></i><b> 2026 Gabrielle Burgard. All Rights Reserved.</b></p>
             </footer>
         </div>
 

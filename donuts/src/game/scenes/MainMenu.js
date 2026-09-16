@@ -1,699 +1,595 @@
-import { EventBus } from '../EventBus';
+import Phaser from 'phaser';
 import { Scene } from 'phaser';
+import { EventBus } from '../EventBus';
+import { GAME_WIDTH, GAME_HEIGHT } from '../config';
+
+/** In-app content routes. Everything else is treated as the home view. */
+const CONTENT_ROUTES = ['projects', 'about', 'contact'];
+
+/** Breakpoint (px) below which the layout switches to its small-screen form. */
+const SMALL_SCREEN_MAX_WIDTH = 768;
+
+/** Milliseconds the sliding menu stays open after the pointer leaves. */
+const MENU_AUTO_HIDE_DELAY = 1500;
+
+/** Colours for the cursive menu link labels. */
+const LINK_COLOR = '#a94064';
+const LINK_HOVER_COLOR = '#fc5c85';
+
+/**
+ * The six menu entries, in display order. `sprite` is the donut texture used
+ * for the fly-away animation when the entry is selected; `donut` is the texture
+ * used inside the open-box layout.
+ */
+const MENU_ITEMS = [
+    { label: 'Home', donut: 'first-donut', sprite: 'pink-donut' },
+    { label: 'Projects', donut: 'second-donut', sprite: 'blue-donut' },
+    { label: 'About', donut: 'third-donut', sprite: 'choco-donut' },
+    { label: 'Contact', donut: 'fourth-donut', sprite: 'choco-donut' },
+    { label: 'Resume', donut: 'fifth-donut', sprite: 'pink-donut' },
+    { label: 'Blog', donut: 'sixth-donut', sprite: 'blue-donut' },
+];
+
+/** Frames of the box-opening animation (played forwards on entry). */
+const OPEN_SEQUENCE = ['closed', 'mostlyclosed', 'halfway', 'mostlyopen'];
+
+/** Frames of the box-closing animation (played when an entry is selected). */
+const CLOSE_SEQUENCE = [
+    { key: 'mostlyopen', scale: 0.75 },
+    { key: 'halfway', scale: 0.6 },
+    { key: 'mostlyclosed', scale: 0.5 },
+    { key: 'closed', scale: 0.3 },
+];
+
+/** Per-frame delay (ms) for the box open/close animations. */
+const FRAME_DELAY = 55;
 
 export class MainMenu extends Scene {
     constructor() {
         super('MainMenu');
+
+        this.logo = null;
+        this.donuts = [];
+        this.linkTexts = [];
+        this.zones = [];
+        this.links = {};
+
+        this._hideDonutsTimer = null;
+        this._menuStaysOut = false;
     }
 
     create() {
-        const scaleFactor = Math.min(window.innerWidth / 1520, window.innerHeight / 680);
-    
-        const currentPath = window.location.href;
+        this.handleHomePage();
 
-        const isHomePage = currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home';
-        const isMobile = window.innerWidth <= 768;
-    
-        if (isHomePage && isMobile) {
-            const gameContainer = document.getElementById('game-container');
-            if (gameContainer) {
-                gameContainer.style.top = '24%';
-                gameContainer.style.left = '54%';
-                gameContainer.style.right = '90%';
-                gameContainer.style.width = '140%';
-            }
-        }
-    
-        
-        if (isHomePage) {
-            localStorage.removeItem('donutClicked');
-            EventBus.emit('home-menu-clicked', false);
-        }
-    
-        if (currentPath == 'https://gsbirds.github.io/donut_portfolio/') {
-            localStorage.removeItem('donutClicked');
+        // The landing (home) view shows the animated open box; every other
+        // in-app route shows the compact box menu, matching the deployed site.
+        this._view = this.isHomeUrl() ? 'open' : 'closed';
 
-            EventBus.emit('home-menu-clicked', false);
-        }
-    
-        const isDonutClicked = JSON.parse(localStorage.getItem('donutClicked'));
-    
-        if (isDonutClicked) {
-            this.showInitialClosedBox(scaleFactor);
+        if (this._view === 'closed') {
+            this.showInitialClosedBox();
             EventBus.emit('donut-hovered', false);
         } else {
-            this.showInitialOpenBox(scaleFactor);
+            // First paint plays the opening animation; rebuilds skip it.
+            this.showInitialOpenBox(true);
+        }
+
+        this.registerResizeHandler();
+        this.registerRouteHandler();
+
+        EventBus.emit('current-scene-ready', this);
+    }
+
+    /**
+     * Navigation between in-app routes only changes the URL hash (no page
+     * reload), so the scene listens for hashchange and re-renders the view that
+     * matches the new route: the open box on home, the compact menu elsewhere.
+     */
+    registerRouteHandler() {
+        this._onHashChange = () => {
+            const nextView = this.isHomeUrl() ? 'open' : 'closed';
+            if (nextView === this._view) {
+                return;
+            }
+            this._view = nextView;
+            this.renderCurrentView();
+        };
+
+        window.addEventListener('hashchange', this._onHashChange);
+
+        this.events.once('shutdown', () => {
+            window.removeEventListener('hashchange', this._onHashChange);
+        });
+    }
+
+    /**
+     * Rebuild the menu layout when the viewport crosses the mobile/desktop
+     * breakpoint. FIT scaling already resizes the artwork continuously; this
+     * only re-runs when the *arrangement* needs to change, and is debounced so
+     * dragging the window doesn't thrash.
+     */
+    registerResizeHandler() {
+        this._wasSmallScreen = this.isSmallScreen;
+
+        this._onResize = () => {
+            clearTimeout(this._resizeDebounce);
+            this._resizeDebounce = setTimeout(() => {
+                if (this.isSmallScreen !== this._wasSmallScreen) {
+                    this._wasSmallScreen = this.isSmallScreen;
+                    this.renderCurrentView();
+                }
+            }, 150);
+        };
+
+        this.scale.on('resize', this._onResize);
+
+        this.events.once('shutdown', () => {
+            this.scale.off('resize', this._onResize);
+            clearTimeout(this._resizeDebounce);
+        });
+    }
+
+    /**
+     * Reset the scene to a clean slate and render the active view. Using
+     * Phaser's own teardown primitives guarantees no orphaned sprites, tweens
+     * or timers survive from a previous view (e.g. the fly-away transition).
+     */
+    renderCurrentView() {
+        clearTimeout(this._hideDonutsTimer);
+        this.tweens.killAll();
+        this.time.removeAllEvents();
+        this.children.removeAll(true);
+
+        this.logo = null;
+        this.zones = [];
+        this.linkTexts = [];
+        this.donuts = [];
+
+        if (this._view === 'closed') {
+            this.showInitialClosedBox();
+        } else {
+            // Skip the opening animation on a rebuild.
+            this.buildOpenBox();
         }
     }
-    
 
-    showInitialClosedBox(scaleFactor) {
-        this.checkLogoHover()
-        if (window.location.pathname !== '/home') {
+    // ---------------------------------------------------------------------
+    // Routing / page helpers
+    // ---------------------------------------------------------------------
+
+    handleHomePage() {
+        if (this.isHomeUrl()) {
+            localStorage.removeItem('donutClicked');
             EventBus.emit('home-menu-clicked', false);
         }
-    
-        this.logo = this.add.image(120, 30, 'closed').setDepth(100).setScale(0.3 * scaleFactor);
-        this.createSlidingDonuts(scaleFactor);
-        
-        this.logo.setInteractive();
-    
-        window.addEventListener('resize', () => {
-            this.resizeHandler();
-        });
-    
-        this.logo.on('pointerover', () => {
-            this.input.manager.canvas.style.cursor = 'pointer';
-            this.logo.setTexture('mostlyclosed');
-            EventBus.emit('donut-hovered', true );
+    }
 
+    /**
+     * The landing (home) view is anything that is not one of the content
+     * routes. Defining it by exclusion keeps home as the default: any hash that
+     * isn't projects/about/contact shows the big open menu, never the compact
+     * one. Content routes show the compact menu.
+     */
+    isHomeUrl() {
+        const hash = window.location.hash;
+        return !CONTENT_ROUTES.some((route) => hash.includes(route));
+    }
+
+    // ---------------------------------------------------------------------
+    // Layout helpers
+    // ---------------------------------------------------------------------
+
+    get isSmallScreen() {
+        return window.innerWidth <= SMALL_SCREEN_MAX_WIDTH;
+    }
+
+    setCursorStyle(style) {
+        this.input.manager.canvas.style.cursor = style;
+    }
+
+    // ---------------------------------------------------------------------
+    // Closed-box view (returning visitor): compact logo + sliding donut menu
+    // ---------------------------------------------------------------------
+
+    showInitialClosedBox() {
+        this.logo = this.add.image(120, 30, 'closed')
+            .setDepth(100)
+            .setScale(0.3)
+            .setInteractive({ useHandCursor: true });
+
+        this.createSlidingDonuts();
+        this.setupLogoHoverEffects();
+        this.setupLogoMenuInteractions();
+
+        // Show the donut row by default so every non-home page has a visible,
+        // ready-to-use menu. The logo still toggles it open/closed.
+        this.showDonuts();
+        this._menuStaysOut = true;
+    }
+
+    setupLogoHoverEffects() {
+        this.logo.on('pointerover', () => {
+            this.setCursorStyle('pointer');
+            this.logo.setTexture('mostlyclosed');
+            EventBus.emit('donut-hovered', true);
         });
 
         this.logo.on('pointerout', () => {
-            this.input.manager.canvas.style.cursor = 'default';
+            this.setCursorStyle('default');
             this.logo.setTexture('closed');
-            EventBus.emit('donut-hovered', false );
-
+            EventBus.emit('donut-hovered', false);
         });
-        return;
     }
- 
 
-
-    showInitialOpenBox(scaleFactor){
-        this.showInitialImages(() => {
-            const background = this.add.image(512, 384, 'background');
-            background.setAlpha(0);
-    
-            let logoX, logoY;
-    
-            const isSmallScreen = window.innerWidth <= 768;
-            
-            if (isSmallScreen) {
-                logoX = 254;
-                logoY = 712;
-            } else {
-                logoX = 442;
-                logoY = 744;
-            }
-    
-            const baseLogoSize = 480;
-            const baseLogoScale = 0.75 * scaleFactor;
-            const logoWidth = this.textures.get('logo').getSourceImage().width;
-            const calculatedScale = Math.max(baseLogoSize / logoWidth, baseLogoScale);
-    
-            this.logo = this.add.image(logoX, logoY, 'logo')
-                .setDepth(100)
-                .setScale(calculatedScale);
-    
-            this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * calculatedScale, 'Home', 'first-donut');
-            this.createInteractiveZoneRelativeToLogo(100, 200, 75 * calculatedScale, 'Projects', 'second-donut');
-            this.createInteractiveZoneRelativeToLogo(250, 200, 75 * calculatedScale, 'About', 'third-donut');
-            this.createInteractiveZoneRelativeToLogo(100, 300, 75 * calculatedScale, 'Contact', 'fourth-donut');
-            this.createInteractiveZoneRelativeToLogo(250, 300, 75 * calculatedScale, 'Resume', 'fifth-donut');
-            this.createInteractiveZoneRelativeToLogo(400, 300, 75 * calculatedScale, 'Blog', 'sixth-donut');
-    
-            this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', calculatedScale, Phaser.Math.DegToRad(-19));
-            this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', calculatedScale, Phaser.Math.DegToRad(-19));
-            this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', calculatedScale, Phaser.Math.DegToRad(-19));
-            this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
-            this.createLinkRelativeToLogo(250, 290, 'Resume', 'fifth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
-            this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', calculatedScale, Phaser.Math.DegToRad(-25));
-    
-            EventBus.emit('current-scene-ready', this);
-            EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
-        });
-
-    }
-    
-
-   
-    createSlidingDonuts(scaleFactor) {
-        const donutImages = ['pink-donut', 'blue-donut', 'choco-donut', 'pink-donut', 'blue-donut', 'choco-donut'];
-        const donutLinks = ['Home', 'Projects', 'About', 'Contact', 'Blog', 'Resume'];
-    
+    createSlidingDonuts() {
         this.donuts = [];
         this.linkTexts = [];
-        let hideDonutsTimer;
-        let menuStaysOut = false;
-    
-        const isSmallScreen = window.innerWidth <= 768;
-        const isLargeScreen = window.innerWidth > 1100;
-        const maxDonutWidth = 100;
-        const maxDonutHeight = 100;
+        this._hideDonutsTimer = null;
+        this._menuStaysOut = false;
 
-        const donutGap = isLargeScreen ? 5 : 20;
-        const textGap = isLargeScreen ? 95 : 50;
-    
-    
-        for (let i = 0; i < donutImages.length; i++) {
-            const position = this.calculateDonutPosition(i, scaleFactor, isSmallScreen, donutGap);
-    
-            const donut = this.add.image(position.x, position.y, donutImages[i]).setDepth(101);
-    
-            const donutWidth = donut.width * 0.3 * scaleFactor;
-            const donutHeight = donut.height * 0.3 * scaleFactor;
-    
-            const adjustedDonutScaleFactor = Math.min(
-                0.3 * scaleFactor,
-                maxDonutWidth / donut.width,
-                maxDonutHeight / donut.height
-            );
-    
-            donut.setScale(adjustedDonutScaleFactor)
-                .setAlpha(0) 
-                .setInteractive({ useHandCursor: true })
-                .setName(donutLinks[i]);
+        MENU_ITEMS.forEach((item, index) => {
+            const position = this.calculateDonutPosition(index);
 
-    
-            const linkText = this.add.text(position.x, position.y + textGap, donutLinks[i], {
+            const donut = this.add.image(position.x, position.y, item.sprite)
+                .setDepth(101)
+                .setScale(this.donutMenuScale(item.sprite))
+                .setAlpha(0)
+                .setName(item.label);
+
+            // A generous circular hit area (in the texture's local space, so it
+            // scales with the donut) keeps the tap target comfortably large on
+            // touch screens even though the donut is drawn small.
+            const source = this.textures.get(item.sprite).getSourceImage();
+            const hitRadius = Math.max(source.width, source.height) * 0.6;
+            donut.setInteractive({
+                hitArea: new Phaser.Geom.Circle(source.width / 2, source.height / 2, hitRadius),
+                hitAreaCallback: Phaser.Geom.Circle.Contains,
+                useHandCursor: true,
+            });
+
+            const linkText = this.add.text(position.x, position.y + this.textGap, item.label, {
                 fontSize: 20,
                 fontStyle: 'bold',
                 fontFamily: 'Cedarville Cursive',
-                className: 'cedarville-cursive-regular',
-                fill: '#3e4346'
-            }).setOrigin(0.5).setDepth(102).setAlpha(0).setInteractive({ useHandCursor: true });
-    
+                fill: '#3e4346',
+            })
+                .setOrigin(0.5)
+                .setDepth(102)
+                .setAlpha(0)
+                .setInteractive({ useHandCursor: true });
 
-            donut.on('pointerover', () => {
-                clearTimeout(hideDonutsTimer);
-                this.input.manager.canvas.style.cursor = 'pointer';
-                EventBus.emit('donut-hovered', true);
-            });
-                
-            donut.on('pointerout', () => {
-                this.input.manager.canvas.style.cursor = 'default';
-                EventBus.emit('donut-hovered', false);
+            linkText.on('pointerup', () => this.navigateToDestination(item.label));
 
-                if (!menuStaysOut) {
-                    hideDonutsTimer = setTimeout(() => {
-                        this.hideDonuts(this.donuts, this.linkTexts);
-                    }, 1500);
-                }
-            });
-    
-            donut.on('pointerdown', () => {
-                let url;
-                if (donutLinks[i] === 'Blog') {
-                    url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
-                } else if (donutLinks[i] === 'Resume') {
-                    url = `./assets/resume.pdf`;
-                } else {
-                    if (donutLinks[i]=='Home'){
+            this.setupDonutInteractions(donut, item.label);
 
-                    this.tweens.add({
-                        targets: donut,
-                        angle: { from: 0, to: 360 },
-                        ease: 'Sine.easeInOut',
-                        onComplete: () => {
-                        EventBus.emit('home-menu-clicked', true);
-                        }
-                    });
-                    localStorage.removeItem('donutClicked');
-                    EventBus.emit('home-menu-clicked', false);
-                    
-
-                    }
-                    url = `${window.location.origin}/donut_portfolio/${donutLinks[i].toLowerCase()}`;
-
-                }
-    
-                this.tweens.add({
-                    targets: donut,
-                    angle: { from: 0, to: 360 },
-                    ease: 'Sine.easeInOut',
-                    onComplete: () => {
-                        window.location.href = url;
-
-                        const isHomePage = currentPath.includes('home') || currentPath === 'https://gsbirds.github.io/donut_portfolio/#/home';
-                        const isMobile = window.innerWidth <= 768;
-                    
-                        if (isHomePage && isMobile) {
-                            const gameContainer = document.getElementById('game-container');
-                            if (gameContainer) {
-                                gameContainer.style.top = '24%';
-                                gameContainer.style.left = '54%';
-                                gameContainer.style.right = '90%';
-                                gameContainer.style.width = '140%';
-                            }
-                        }
-                    }
-                });
-            });
-    
             this.donuts.push(donut);
             this.linkTexts.push(linkText);
+        });
+    }
+
+    donutMenuScale(spriteKey) {
+        const image = this.textures.get(spriteKey).getSourceImage();
+        const maxSize = 100;
+        return Math.min(0.3, maxSize / image.width, maxSize / image.height);
+    }
+
+    get textGap() {
+        return window.innerWidth > 1100 ? 95 : 50;
+    }
+
+    get donutGap() {
+        return window.innerWidth > 1100 ? 5 : 20;
+    }
+
+    calculateDonutPosition(index) {
+        let gapAdd = 125;
+        if (window.innerWidth < 901 && window.innerWidth > SMALL_SCREEN_MAX_WIDTH) {
+            gapAdd = 98;
         }
 
-        this.checkDonutHover()
-        this.logo.setInteractive();
-    
-        this.logo.on('pointerdown', () => {
-            clearTimeout(hideDonutsTimer);
-            this.input.manager.canvas.style.cursor = 'pointer';
-            if (!menuStaysOut) {
-                const isSmallScreen = window.innerWidth <= 768;
-                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen, donutGap);
-            }
+        if (this.isSmallScreen) {
+            return { x: 100, y: 150 + index * 100 };
+        }
+        return { x: 250 + index * gapAdd + this.donutGap, y: 100 };
+    }
+
+    setupDonutInteractions(donut, linkName) {
+        donut.on('pointerover', () => {
+            clearTimeout(this._hideDonutsTimer);
+            this.setCursorStyle('pointer');
+            EventBus.emit('donut-hovered', true);
         });
-    
-        this.logo.on('pointerout', () => {
-            this.input.manager.canvas.style.cursor = 'default';
-            if (!menuStaysOut) {
-                hideDonutsTimer = setTimeout(() => {
-                    const isSmallScreen = window.innerWidth <= 768;
-                    this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
-                }, 1500);
-            }
+
+        donut.on('pointerout', () => {
+            this.setCursorStyle('default');
+            EventBus.emit('donut-hovered', false);
+            this.scheduleMenuAutoHide();
         });
-    
+
+        // pointerup fires on tap release for both mouse and touch, so it is the
+        // reliable trigger on mobile (pointerover/out don't apply to touch).
+        const select = () => {
+            if (linkName === 'Home') {
+                localStorage.removeItem('donutClicked');
+                EventBus.emit('home-menu-clicked', false);
+            }
+            this.animateDonutRotation(donut, () => this.navigateToDestination(linkName));
+        };
+
+        donut.on('pointerup', select);
+        this.links[linkName] = donut;
+    }
+
+    setupLogoMenuInteractions() {
         this.logo.on('pointerdown', () => {
-            const isSmallScreen = window.innerWidth <= 768;
-            if (menuStaysOut) {
-                this.hideDonuts(this.donuts, this.linkTexts, isSmallScreen);
-                menuStaysOut = false;
+            if (this._menuStaysOut) {
+                this.hideDonuts();
+                this._menuStaysOut = false;
             } else {
-                clearTimeout(hideDonutsTimer);
-                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen, donutGap); 
-                menuStaysOut = true;
+                clearTimeout(this._hideDonutsTimer);
+                this.showDonuts();
+                this._menuStaysOut = true;
             }
         });
 
+        this.logo.on('pointerout', () => {
+            this.setCursorStyle('default');
+            this.scheduleMenuAutoHide();
+        });
     }
 
-    checkLogoHover() {
-        const pointer = this.input.activePointer;
-    
-        if (!pointer || !this.logo) {
+    scheduleMenuAutoHide() {
+        if (this._menuStaysOut) {
             return;
         }
-    
-        const logoBounds = this.logo.getBounds();
-    
-        if (pointer.x > logoBounds.x && pointer.x < logoBounds.x + logoBounds.width &&
-            pointer.y > logoBounds.y && pointer.y < logoBounds.y + logoBounds.height) {
-    
-            if (!this.isLogoHovered) {
-                console.log('Hovering over the closed donut box');
-                EventBus.emit('donut-hovered', { name: 'Closed Donut Box', hovered: true });
-                this.isLogoHovered = true; 
-                this.input.manager.canvas.style.cursor = 'pointer'; 
-            }
-    
-            if (pointer.isDown) {
-                console.log('Closed donut box clicked');
-                EventBus.emit('donut-hovered', { name: 'Closed Donut Box', clicked: true });
-                this.handleClosedDonutBoxClick();
-            }
-        } else if (this.isLogoHovered) {
-            EventBus.emit('donut-hovered', { hovered: false });
-            this.isLogoHovered = false;
-            this.input.manager.canvas.style.cursor = 'default';
-        }
-    }
-    
-    handleClosedDonutBoxClick() {
-        console.log('Handling closed donut box click logic');
-        EventBus.emit('home-menu-clicked', true);
-    }
-    
-
-    checkDonutHover() {
-        let isHovering = false;
-        const pointer = this.input.activePointer;
-    
-        if (!pointer) {
-            return;
-        }
-    
-        for (let i = 0; i < this.donuts.length; i++) {
-            const donut = this.donuts[i];
-            const donutBounds = donut.getBounds();
-    
-            if (!donutBounds) {
-                continue;
-            }
-        
-            if (pointer.x > donutBounds.x && pointer.x < donutBounds.x + donutBounds.width &&
-                pointer.y > donutBounds.y && pointer.y < donutBounds.y + donutBounds.height) {
-                
-                if (this.hoveredDonut !== donut) {
-                    console.log('Hovering over: ', donut.name);
-                    EventBus.emit('donut-hovered', { name: donut.name, hovered: true });
-                    this.hoveredDonut = donut;
-                }
-                isHovering = true;
-                break;
-            }
-        }
-    
-        if (!isHovering && this.hoveredDonut !== null) {
-            EventBus.emit('donut-hovered', { hovered: false });
-            this.hoveredDonut = null;
-        }
-    }
-    
-    
-    calculateScaleFactor() {
-        return Math.min(window.innerWidth / 1520, window.innerHeight / 680);
+        this._hideDonutsTimer = setTimeout(() => this.hideDonuts(), MENU_AUTO_HIDE_DELAY);
     }
 
-    resizeHandler() {
-        this.scaleFactor = this.calculateScaleFactor();
-        
-        if (this.logo) {
-            this.logo.setScale(0.3 * this.scaleFactor);
-        }
-    
-        if (this.donuts && this.donuts.length > 0) {
-            const isSmallScreen = window.innerWidth <= 768;
-    
-            for (let i = 0; i < this.donuts.length; i++) {
-                const position = this.calculateDonutPosition(i, this.scaleFactor, isSmallScreen);
-    
-                this.donuts[i].setScale(0.23 * this.scaleFactor);
-                this.donuts[i].setPosition(position.x, position.y);
-            }
-    
-            if (this.donuts[0].alpha > 0) {
-                this.showDonuts(this.donuts, this.linkTexts, isSmallScreen);
-            }
-        }
-    }
-    
-    
-    
-    calculateDonutPosition(i, scaleFactor, isSmallScreen, donutGap) {
-        let gapAdd=125
-        if (window.innerWidth < 901 && window.innerWidth>768){
-            gapAdd=98
-        }
-        const xPosition = isSmallScreen ? 100 : 250 + (i * gapAdd + donutGap);
-        const yPosition = isSmallScreen ? 150 + (i * 100 * scaleFactor) : 100 * scaleFactor;
-        return { x: xPosition, y: yPosition };
-    }
-
-    
-    showDonuts(donuts, linkTexts, isSmallScreen, donutGap) {
-        for (let i = 0; i < donuts.length; i++) {
-            const position = this.calculateDonutPosition(i, 1, isSmallScreen, donutGap);
-    
-            this.tweens.add({
-                targets: donuts[i],
-                x: position.x,
-                y: position.y,
-                alpha: 1,
-                duration: 500,
-                ease: 'Power2'
-            });
-    
-            this.tweens.add({
-                targets: linkTexts[i],
+    showDonuts() {
+        this.donuts.forEach((donut, index) => {
+            const position = this.calculateDonutPosition(index);
+            this.animateUIElement(donut, { x: position.x, y: position.y, alpha: 1 });
+            this.animateUIElement(this.linkTexts[index], {
                 x: position.x,
                 y: position.y + 50,
                 alpha: 1,
-                duration: 500,
-                ease: 'Power2'
-            });
-        }
-    }
-    
-    hideDonuts(donuts, linkTexts, isSmallScreen) {
-        for (let i = 0; i < donuts.length; i++) {
-            let xPosition = isSmallScreen ? 100 : 250 + (i * 125);
-    
-            this.tweens.add({
-                targets: donuts[i],
-                x: xPosition,
-                alpha: 0,
-                duration: 500,
-                ease: 'Power2'
-            });
-    
-            this.tweens.add({
-                targets: linkTexts[i],
-                x: xPosition,
-                alpha: 0,
-                duration: 500,
-                ease: 'Power2'
-            });
-        }
-    }
-    
-
-    
-    showInitialImages(callback) {
-        const background = this.add.image(512, 384, 'background');
-        background.setAlpha(0);
-        const showImage = (x, y, key, scale, delay, next) => {
-            const image = this.add.image(x, y, key).setDepth(200).setScale(scale);
-            this.time.delayedCall(delay, () => {
-                image.destroy();
-                if (next) {
-                    next();
-                } else {
-                    callback();
-                }
-            });
-        };
-
-        showImage(512, 384, 'closed', 0.75, 100, () => {
-            showImage(512, 384, 'mostlyclosed', 0.75, 100, () => {
-                showImage(512, 384, 'halfway', 0.75, 100, () => {
-                    showImage(512, 384, 'mostlyopen', 0.75, 100, callback);
-                });
             });
         });
     }
 
-    reverseImages(callback) {
-        const sizes = [0.75, 0.6, 0.5, 0.3];
-        const keys = ['mostlyopen', 'halfway', 'mostlyclosed', 'closed'];
-        const delays = [100, 100, 100, 100];
-        let imageIndex = 0;
-
-        const reverseImage = () => {
-            if (imageIndex < keys.length) {
-                this.logo.setTexture(keys[imageIndex]);
-                this.logo.setScale(sizes[imageIndex]);
-                this.time.delayedCall(delays[imageIndex], () => {
-                    imageIndex++;
-                    reverseImage();
-                });
-            } else {
-                callback();
-            }
-        };
-
-        reverseImage();
+    hideDonuts() {
+        this.donuts.forEach((donut, index) => {
+            const x = this.isSmallScreen ? 100 : 250 + index * 125;
+            this.animateUIElement(donut, { x, alpha: 0 });
+            this.animateUIElement(this.linkTexts[index], { x, alpha: 0 });
+        });
     }
 
+    animateDonutRotation(donut, onComplete) {
+        this.tweens.add({
+            targets: donut,
+            angle: { from: 0, to: 360 },
+            ease: 'Sine.easeInOut',
+            onComplete,
+        });
+    }
 
-    addSprite(spriteName) {
-        const scene = this;
-        const isSmallScreen = window.innerWidth <= 768;
-    
-        if (scene) {
-            let x
-            if (isSmallScreen){
-            x = (scene.scale.width / 2) -200;
-            }
-            else{
-            x = (scene.scale.width / 2) + 80;
+    // ---------------------------------------------------------------------
+    // Open-box view (first visit): animated box + interactive donut menu
+    // ---------------------------------------------------------------------
 
-            }
-            const y = scene.scale.height / 2;
-    
-            const star = scene.add.sprite(x, y, spriteName);
-            star.setDepth(1000);
-    
-            if (isSmallScreen) {
-                star.setScale(1 / 3);
-            }
-    
-            scene.add.tween({
-                targets: star,
-                y: { start: y - 200, to: y + 200 },
-                duration: 500,
-                yoyo: true,
-                repeat: -1,
-                ease: 'Sine.easeInOut'
-            });
-    
-            scene.add.tween({
-                targets: star,
-                angle: 360,
-                duration: 1000,
-                repeat: -1
-            });
-    
-            scene.time.delayedCall(4000, () => {
-                star.destroy();
-            });
+    showInitialOpenBox(playAnimation = false) {
+        if (playAnimation) {
+            this.playOpenSequence(() => this.buildOpenBox());
+        } else {
+            this.buildOpenBox();
         }
+    }
+
+    /** Build the open-box logo, interactive zones and cursive link labels. */
+    buildOpenBox() {
+        const small = this.isSmallScreen;
+        const logoX = small ? 254 : 442;
+        const logoY = small ? 712 : 744;
+
+        const baseLogoSize = 480;
+        const logoWidth = this.textures.get('logo').getSourceImage().width;
+        const scale = Math.max(baseLogoSize / logoWidth, 0.75);
+
+        this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(scale);
+
+        this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scale, 'Home', 'first-donut');
+        this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scale, 'Projects', 'second-donut');
+        this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scale, 'About', 'third-donut');
+        this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scale, 'Contact', 'fourth-donut');
+        this.createInteractiveZoneRelativeToLogo(250, 300, 75 * scale, 'Resume', 'fifth-donut');
+        this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scale, 'Blog', 'sixth-donut');
+
+        this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scale, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scale, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scale, Phaser.Math.DegToRad(-19));
+        this.createLinkRelativeToLogo(100, 370, 'Contact', 'fourth-donut', scale, Phaser.Math.DegToRad(-25));
+        this.createLinkRelativeToLogo(250, 290, 'Resume', 'fifth-donut', scale, Phaser.Math.DegToRad(-25));
+        this.createLinkRelativeToLogo(400, 220, 'Blog', 'sixth-donut', scale, Phaser.Math.DegToRad(-25));
+
+        EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
+    }
+
+    /** Play the forward box-opening frames centred in the world, then callback. */
+    playOpenSequence(onComplete, index = 0) {
+        if (index >= OPEN_SEQUENCE.length) {
+            onComplete();
+            return;
         }
 
-    
+        const image = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, OPEN_SEQUENCE[index])
+            .setDepth(200)
+            .setScale(0.75);
+
+        this.time.delayedCall(FRAME_DELAY, () => {
+            image.destroy();
+            this.playOpenSequence(onComplete, index + 1);
+        });
+    }
+
+    /** Play the reverse box-closing frames on the current logo, then callback. */
+    playCloseSequence(onComplete, index = 0) {
+        if (index >= CLOSE_SEQUENCE.length) {
+            onComplete();
+            return;
+        }
+
+        const step = CLOSE_SEQUENCE[index];
+        this.logo.setTexture(step.key).setScale(step.scale);
+
+        this.time.delayedCall(FRAME_DELAY, () => {
+            this.playCloseSequence(onComplete, index + 1);
+        });
+    }
 
     createInteractiveZoneRelativeToLogo(offsetX, offsetY, radius, name, imageName) {
         const zone = this.add.zone(
             this.logo.x + offsetX * this.logo.scaleX,
             this.logo.y + offsetY * this.logo.scaleY,
             radius * 2,
-            radius * 2
-        ).setCircleDropZone(radius).setName(name).setInteractive();
-    
-        zone.on('pointerover', () => {
-            this.input.manager.canvas.style.cursor = 'pointer';
-        });
-    
-        zone.on('pointerout', () => {
-            this.input.manager.canvas.style.cursor = 'default';
-        });
-    
-        zone.on('pointerdown', () => {
-            let spriteName;
-    
-            if (name === 'Home' || name === 'Resume') {
-                spriteName = 'pink-donut';
-            } else if (name === 'Projects' || name === 'Blog') {
-                spriteName = 'blue-donut';
-            } else if (name === 'About' || name === 'Contact') {
-                spriteName = 'choco-donut';
-            }
-    
-            if (this.zones) {
-                this.zones.forEach(zone => zone.destroy());
-            }
-    
-            if (this.linkTexts) {
-                this.linkTexts.forEach(text => text.destroy());
-            }
-    
-            if (this.logo) {
-                this.logo.destroy();
-            }
-    
-            this.logo = this.add.image(612, 495, imageName).setScale(0.75);
-    
-            this.addSprite(spriteName);
-    
-            this.reverseImages(() => {
-                this.tweens.add({
-                    targets: this.logo,
-                    x: 100,
-                    y: 50,
-                    duration: 1000,
-                    ease: 'Power2',
-                    onComplete: () => {
-                        let url = '';
-                        if (name === 'Blog') {
-                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
-                        } else if (name === 'Resume') {
-                            url = `./assets/resume.pdf`;
-                        } else {
-                            url = `${window.location.origin}/donut_portfolio/${name.toLowerCase()}`;
-                        }
+            radius * 2,
+        ).setCircleDropZone(radius).setName(name).setInteractive({ useHandCursor: true });
 
-                        if (name === 'Home') {
-                            localStorage.removeItem('donutClicked');
+        zone.on('pointerover', () => this.setCursorStyle('pointer'));
+        zone.on('pointerout', () => this.setCursorStyle('default'));
+        // pointerup works for both mouse and touch.
+        zone.on('pointerup', () => this.selectOpenBoxItem(name, imageName));
 
-                        }else {
-                            EventBus.emit('donut-clicked', true);
- 
-                        }
-
-                        window.location.href = url;
-                    
-                    }
-                });
-            });
-        });
-    
-        this.zones = this.zones || [];
         this.zones.push(zone);
     }
-    
-    
-    
-    createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scaleFactor, rotation) {
-        const minFontSize = 14;
-        const baseFontSize = 25 * scaleFactor;
-        const calculatedFontSize = Math.max(minFontSize, baseFontSize); 
+
+    createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scale, rotation) {
+        const fontSize = Math.max(14, 25 * scale);
+
         const linkText = this.add.text(
             this.logo.x + offsetX * this.logo.scaleX,
             this.logo.y + offsetY * this.logo.scaleY,
-            label, {
-                fontSize: `${calculatedFontSize}px`,
-                fontFamily: 'Cedarville Cursive',
-                className: 'cedarville-cursive-regular',
-            }
-        ).setOrigin(0.5).setDepth(101).setInteractive();
-    
-        linkText.setRotation(rotation);
-    
-        linkText.on('pointerover', () => {
-            this.input.manager.canvas.style.cursor = 'pointer';
-            linkText.setStyle({ fill: '#fc5c85' });
-        });
-    
-        linkText.on('pointerout', () => {
-            this.input.manager.canvas.style.cursor = 'default';
-            linkText.setStyle({ fill: '#a94064' });
-        });
-    
-        linkText.on('pointerdown', () => {
-            let spriteName;
-            if (label === 'Home' || label === 'Resume') {
-                spriteName = 'pink-donut';
-            } else if (label === 'Projects' || label === 'Blog') {
-                spriteName = 'blue-donut';
-            } else if (label === 'About' || label === 'Contact') {
-                spriteName = 'choco-donut';
-            }
-    
-            this.linkTexts.forEach(text => text.destroy());
-    
-            if (this.logo) {
-                this.logo.destroy();
-            }
-    
-            this.logo = this.add.image(512, 300, imageName).setDepth(200).setScale(0.75);
-    
-            this.addSprite(spriteName);
-    
-            this.reverseImages(() => {
-                this.tweens.add({
-                    targets: this.logo,
-                    x: 100,
-                    y: 50,
-                    duration: 1000,
-                    ease: 'Power2',
-                    onComplete: () => {
-                        let url;
-                        if (label === 'Blog') {
-                            url = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';              
-                        } else if (label === 'Resume') {
-                            url = `./assets/resume.pdf`;
-                        } else {
-                            url = `${window.location.origin}/donut_portfolio/${label.toLowerCase()}`;
-                        }
-                        if (label === 'Home') {
-                            localStorage.removeItem('donutClicked');
+            label,
+            { fontSize: `${fontSize}px`, fontFamily: 'Cedarville Cursive', fill: LINK_COLOR },
+        ).setOrigin(0.5).setDepth(101).setRotation(rotation).setInteractive({ useHandCursor: true });
 
-                        } else {
-                            EventBus.emit('donut-clicked', true);
-                        }
-                        window.location.href = url;
-                    }
-                });
-            });
+        linkText.on('pointerover', () => {
+            this.setCursorStyle('pointer');
+            linkText.setStyle({ fill: LINK_HOVER_COLOR });
         });
-    
-        this.linkTexts = this.linkTexts || [];
+
+        linkText.on('pointerout', () => {
+            this.setCursorStyle('default');
+            linkText.setStyle({ fill: LINK_COLOR });
+        });
+
+        linkText.on('pointerup', () => this.selectOpenBoxItem(label, imageName));
+
         this.linkTexts.push(linkText);
-    
-        this.links = this.links || {};
         this.links[label] = linkText;
     }
-}    
+
+    /** Shared handler for selecting an entry from the open-box view. */
+    selectOpenBoxItem(name, imageName) {
+        const spriteName = this.getDonutSpriteByName(name);
+
+        this.cleanUpUIElements();
+
+        this.logo = this.add.image(612, 495, imageName).setScale(0.75);
+        this.addFlyingDonut(spriteName);
+
+        this.playCloseSequence(() => {
+            this.tweens.add({
+                targets: this.logo,
+                x: 100,
+                y: 50,
+                duration: 1000,
+                ease: 'Power2',
+                onComplete: () => this.navigateToDestination(name),
+            });
+        });
+    }
+
+    /** Spawn a spinning, bobbing donut that self-destructs after a few seconds. */
+    addFlyingDonut(spriteName) {
+        const x = this.isSmallScreen ? GAME_WIDTH / 2 - 200 : GAME_WIDTH / 2 + 80;
+        const y = GAME_HEIGHT / 2;
+
+        const donut = this.add.sprite(x, y, spriteName).setDepth(1000);
+        if (this.isSmallScreen) {
+            donut.setScale(1 / 3);
+        }
+
+        this.tweens.add({
+            targets: donut,
+            y: { start: y - 200, to: y + 200 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
+        });
+
+        this.tweens.add({ targets: donut, angle: 360, duration: 1000, repeat: -1 });
+
+        this.time.delayedCall(4000, () => donut.destroy());
+    }
+
+    // ---------------------------------------------------------------------
+    // Shared helpers
+    // ---------------------------------------------------------------------
+
+    animateUIElement(target, properties, duration = 500, ease = 'Power2', onComplete = null) {
+        const config = { targets: target, ...properties, duration, ease };
+        if (onComplete) {
+            config.onComplete = onComplete;
+        }
+        this.tweens.add(config);
+    }
+
+    getDonutSpriteByName(name) {
+        if (name === 'Projects' || name === 'Blog') {
+            return 'blue-donut';
+        }
+        if (name === 'About' || name === 'Contact') {
+            return 'choco-donut';
+        }
+        return 'pink-donut';
+    }
+
+    cleanUpUIElements() {
+        clearTimeout(this._hideDonutsTimer);
+        this.zones.forEach((zone) => zone.destroy());
+        this.linkTexts.forEach((text) => text.destroy());
+        this.donuts.forEach((donut) => donut.destroy());
+        if (this.logo) {
+            this.logo.destroy();
+            this.logo = null;
+        }
+        this.zones = [];
+        this.linkTexts = [];
+        this.donuts = [];
+    }
+
+    navigateToDestination(name) {
+        // External destinations navigate away entirely.
+        if (name === 'Blog') {
+            EventBus.emit('donut-clicked', true);
+            window.location.href = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
+            return;
+        }
+        if (name === 'Resume') {
+            EventBus.emit('donut-clicked', true);
+            window.location.href = `${import.meta.env.BASE_URL}assets/resume.pdf`;
+            return;
+        }
+
+        // Internal destinations use hash routes so they resolve the same way on
+        // localhost and on the deployed GitHub Pages base path.
+        if (name === 'Home') {
+            localStorage.removeItem('donutClicked');
+            window.location.hash = '#/';
+        } else {
+            EventBus.emit('donut-clicked', true);
+            window.location.hash = `#/${name.toLowerCase()}`;
+        }
+    }
+}

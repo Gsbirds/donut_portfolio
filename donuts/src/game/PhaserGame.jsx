@@ -1,14 +1,22 @@
-import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import StartGame from './main';
 import { EventBus } from './EventBus';
-export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, setDonutClicked, sethomeMenuClicked, setDonutHovered }, ref) { // Added setDonutHovered
+
+/**
+ * Bridge component between React and the Phaser game.
+ *
+ * It boots the game exactly once into the #game-container element and forwards
+ * the active scene to `currentActiveScene`. All application state (donut
+ * clicked, menu open, hover) is owned by the parent and driven through the
+ * EventBus, so this component intentionally holds no state of its own.
+ */
+export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene }, ref) {
     const game = useRef();
-    const [homeMenuClicked, setHomeMenuClicked] = useState(JSON.parse(localStorage.getItem('homeMenuClicked')));
 
     useLayoutEffect(() => {
         if (game.current === undefined) {
-            const containerId = homeMenuClicked ? 'game-container-adjust' : 'game-container';
-            game.current = StartGame(containerId, setDonutClicked, sethomeMenuClicked, setDonutHovered);
+            game.current = StartGame('game-container');
 
             if (ref !== null) {
                 ref.current = { game: game.current, scene: null };
@@ -21,39 +29,28 @@ export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene, s
                 game.current = undefined;
             }
         };
-    }, [ref, setDonutClicked, sethomeMenuClicked, setDonutHovered]);
+    }, [ref]);
 
     useEffect(() => {
-        EventBus.on('current-scene-ready', (currentScene) => {
+        const handleSceneReady = (scene) => {
             if (currentActiveScene instanceof Function) {
-                currentActiveScene(currentScene);
+                currentActiveScene(scene);
             }
-            ref.current.scene = currentScene;
-        });
+            if (ref?.current) {
+                ref.current.scene = scene;
+            }
+        };
 
-        EventBus.on('donut-clicked', (clicked) => {
-            setDonutClicked(clicked);
-            localStorage.setItem('donutClicked', JSON.stringify(clicked));
-        });
-
-        EventBus.on('home-menu-clicked', (clicked) => {
-            setHomeMenuClicked(clicked);
-            localStorage.setItem('homeMenuClicked', JSON.stringify(clicked));
-        });
-        EventBus.on('donut-hovered', (hovered) => {
-            setDonutHovered(hovered);
-            localStorage.setItem('donutHovered', JSON.stringify(hovered));
-        });
+        EventBus.on('current-scene-ready', handleSceneReady);
 
         return () => {
-            EventBus.removeListener('current-scene-ready');
-            EventBus.removeListener('donut-clicked');
-            EventBus.removeListener('home-menu-clicked');
-            EventBus.removeListener('donut-hovered');
+            EventBus.off('current-scene-ready', handleSceneReady);
         };
-    }, [currentActiveScene, ref, setDonutClicked, sethomeMenuClicked, setDonutHovered]);
+    }, [currentActiveScene, ref]);
 
-    const containerId = homeMenuClicked ? 'game-container-adjust' : 'game-container';
-
-    return <div id={containerId}></div>;
+    return <div id="game-container"></div>;
 });
+
+PhaserGame.propTypes = {
+    currentActiveScene: PropTypes.func,
+};

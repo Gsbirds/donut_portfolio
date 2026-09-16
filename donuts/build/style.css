@@ -182,16 +182,8 @@ li{
   width: 900px;
 }
 
-.phaser-container{
-  padding-bottom: 80px;
-  margin-bottom: 80px;
-  pointer-events: none;
-}
-
-.phaser-container-hovered{
-  padding-bottom: 80px;
-  margin-bottom: 80px;
-  pointer-events:all;
+.phaser-container {
+  pointer-events: auto;
 }
 
 
@@ -292,47 +284,36 @@ footer ul {
   padding-top: 9rem;
 }
 
+/*
+ * The game canvas is a fixed, top-centred host. The Phaser Scale manager
+ * (FIT + CENTER_BOTH) scales the fixed-resolution world to fit this host and
+ * recomputes on every resize, so the menu grows and shrinks with the screen
+ * on desktop and mobile alike. The host is sized (not full-viewport) so it
+ * never blankets the page: content routes simply flow below it.
+ */
 #game-container {
-  font-family:  "Cedarville Cursive", cursive;
-  position:absolute;
-  left: 68%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  position:absolute;
-}
-
-#game-container-adjust {
-  font-family:  "Cedarville Cursive", cursive;
+  font-family: "Cedarville Cursive", cursive;
   position: fixed;
-  left: 47%;
-  transform: translate(-50%, -210%);
-  z-index: 1;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100vw, 900px);
+  height: min(100dvh, 900px);
+  z-index: 3;
+  pointer-events: auto;
 }
 
-#pages{
-  z-index: 2; 
+/* Let taps reach the game instead of triggering browser scroll/zoom gestures. */
+#game-container canvas {
+  touch-action: none;
 }
 
-@media (min-width: 1100px) {
-  #game-container {
-    width: 110%; 
-    top: 20%;
-    padding-top: 2rem;
-    margin-top: 3rem;
-  }
-
+#pages {
+  position: relative;
+  z-index: 2;
 }
-
 
 @media (max-width: 1200px) {
-  #game-container {
-    width: 80%; 
-    top: 20%;
-    left: 40%; 
-    right: 70%;
-    position:absolute;
-
-  }
   .inkpad, .inkpad2{
     width:600px;
     align-items: center;
@@ -376,26 +357,6 @@ footer ul {
     font-family: 'IBM Plex Mono', monospace;
     text-align: center;
   }
-
-
-  #game-container {
-    top: 20%;
-    left: 35%; 
-    right: 90%; 
-    position:absolute;
-
-  }
-
-
- #game-container-adjust {
-    font-family:  "Cedarville Cursive", cursive;
-    position: fixed;
-    left: 67%;
-    transform: translate(-50%, -210%);
-    z-index: 1;
-  }
-
-   
 }
 
 
@@ -437,24 +398,6 @@ footer ul {
     padding-bottom: 20px;
     padding-top: 50px;
   }
-
-  #game-container-adjust {
-    font-family:  "Cedarville Cursive", cursive;
-    position: fixed;
-    left: 77%;
-    transform: translate(-50%, -210%);
-    z-index: 1;
-  }
-
-  #game-container {
-    top: 54%;
-    left: 40%; 
-    right: 90%; 
-    overflow: hidden;
-    min-height:750px;
-  }
-
-
 }
 
 .link {
@@ -465,25 +408,6 @@ footer ul {
   max-width: 100%;
 }
 
-
-@media (max-width: 600px) {
-
-  #game-container {
-    top: 54%;
-    left: 28%; 
-    right: 90%; 
-  }
-
-
-  #game-container-adjust {
-    font-family:  "Cedarville Cursive", cursive;
-    position: fixed;
-    left: 107%;
-    transform: translate(-50%, -210%);
-    z-index: 1;
-  }
-
-}
 
 .interactive-donut {
   pointer-events: auto;
