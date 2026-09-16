@@ -397,13 +397,10 @@ export class MainMenu extends Scene {
 
         this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(scale);
 
-        this.createInteractiveZoneRelativeToLogo(-50, 200, 75 * scale, 'Home', 'first-donut');
-        this.createInteractiveZoneRelativeToLogo(100, 200, 75 * scale, 'Projects', 'second-donut');
-        this.createInteractiveZoneRelativeToLogo(250, 200, 75 * scale, 'About', 'third-donut');
-        this.createInteractiveZoneRelativeToLogo(100, 300, 75 * scale, 'Contact', 'fourth-donut');
-        this.createInteractiveZoneRelativeToLogo(250, 300, 75 * scale, 'Resume', 'fifth-donut');
-        this.createInteractiveZoneRelativeToLogo(400, 300, 75 * scale, 'Blog', 'sixth-donut');
-
+        // The visible cursive labels are the only clickable elements. We no
+        // longer add invisible hit zones over the box, so hovering or clicking
+        // near the lid can never trigger the close animation — the box stays
+        // open until a link is actually selected.
         this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scale, Phaser.Math.DegToRad(-19));
         this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scale, Phaser.Math.DegToRad(-19));
         this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scale, Phaser.Math.DegToRad(-19));
@@ -446,31 +443,24 @@ export class MainMenu extends Scene {
         });
     }
 
-    createInteractiveZoneRelativeToLogo(offsetX, offsetY, radius, name, imageName) {
-        const zone = this.add.zone(
-            this.logo.x + offsetX * this.logo.scaleX,
-            this.logo.y + offsetY * this.logo.scaleY,
-            radius * 2,
-            radius * 2,
-        ).setCircleDropZone(radius).setName(name).setInteractive({ useHandCursor: true });
-
-        zone.on('pointerover', () => this.setCursorStyle('pointer'));
-        zone.on('pointerout', () => this.setCursorStyle('default'));
-        // pointerup works for both mouse and touch.
-        zone.on('pointerup', () => this.selectOpenBoxItem(name, imageName));
-
-        this.zones.push(zone);
-    }
-
     createLinkRelativeToLogo(offsetX, offsetY, label, imageName, scale, rotation) {
-        const fontSize = Math.max(14, 25 * scale);
+        const fontSize = Math.max(20, 36 * scale);
 
         const linkText = this.add.text(
             this.logo.x + offsetX * this.logo.scaleX,
             this.logo.y + offsetY * this.logo.scaleY,
             label,
             { fontSize: `${fontSize}px`, fontFamily: 'Cedarville Cursive', fill: LINK_COLOR },
-        ).setOrigin(0.5).setDepth(101).setRotation(rotation).setInteractive({ useHandCursor: true });
+        ).setOrigin(0.5).setDepth(101).setRotation(rotation);
+
+        // Tight hit area matching the exact text bounds, so only the visible
+        // letters are clickable. The lid (and empty space around the words) is
+        // never interactive, so hovering/pressing the box can't close it.
+        linkText.setInteractive(
+            new Phaser.Geom.Rectangle(0, 0, linkText.width, linkText.height),
+            Phaser.Geom.Rectangle.Contains,
+        );
+        linkText.input.cursor = 'pointer';
 
         linkText.on('pointerover', () => {
             this.setCursorStyle('pointer');
@@ -480,9 +470,22 @@ export class MainMenu extends Scene {
         linkText.on('pointerout', () => {
             this.setCursorStyle('default');
             linkText.setStyle({ fill: LINK_COLOR });
+            this._pressedLink = null;
         });
 
-        linkText.on('pointerup', () => this.selectOpenBoxItem(label, imageName));
+        // Only fire on a genuine click: the press AND release must both land on
+        // this same link. This stops the box from closing when the mouse is
+        // just brought down / dragged over the lid.
+        linkText.on('pointerdown', () => {
+            this._pressedLink = label;
+        });
+
+        linkText.on('pointerup', () => {
+            if (this._pressedLink === label) {
+                this._pressedLink = null;
+                this.selectOpenBoxItem(label, imageName);
+            }
+        });
 
         this.linkTexts.push(linkText);
         this.links[label] = linkText;
@@ -490,6 +493,13 @@ export class MainMenu extends Scene {
 
     /** Shared handler for selecting an entry from the open-box view. */
     selectOpenBoxItem(name, imageName) {
+        // Selecting Home while already on the home view: just reload the page,
+        // skip the close/fly-away animation.
+        if (name === 'Home' && this.isHomeUrl()) {
+            window.location.reload();
+            return;
+        }
+
         const spriteName = this.getDonutSpriteByName(name);
 
         this.cleanUpUIElements();
