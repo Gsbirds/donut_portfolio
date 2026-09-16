@@ -207,15 +207,16 @@ export class MainMenu extends Scene {
     }
 
     setupLogoHoverEffects() {
+        // Cursor feedback only. The box texture is never changed on hover, so
+        // the box can never animate closed just from the pointer passing over
+        // it — it stays as-is until an actual link is selected.
         this.logo.on('pointerover', () => {
             this.setCursorStyle('pointer');
-            this.logo.setTexture('mostlyclosed');
             EventBus.emit('donut-hovered', true);
         });
 
         this.logo.on('pointerout', () => {
             this.setCursorStyle('default');
-            this.logo.setTexture('closed');
             EventBus.emit('donut-hovered', false);
         });
     }
