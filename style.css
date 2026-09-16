@@ -164,16 +164,6 @@ li{
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
-#contact:hover {
-  transform: rotate(2.5deg);
-  padding-left: 1rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-radius: 35px;
-  background-color: #8d5f74;
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-}
-
 #contact a {
   color: black;
 }
