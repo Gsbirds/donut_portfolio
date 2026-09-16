@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css">
+    <title>Page Not Found</title>
+    <script>
+      window.onload = function() {
+        const path = window.location.pathname;
+
+        const baseURL = "/donut_portfolio";
+
+        if (path.includes("/projects")) {
+          window.location.replace(baseURL + "/#/projects");
+        } else if (path.includes("/about")) {
+          window.location.replace(baseURL + "/#/about");
+        } else if (path.includes("/contact")) {
+          window.location.replace(baseURL + "/#/contact");
+        } else if (path.includes("/home")) {
+            window.location.replace(baseURL + "/#/home");
+        } else {
+          window.location.replace(baseURL + "/#/");
+        }
+      };
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

@@ -75,8 +75,28 @@ export class MainMenu extends Scene {
 
         this.registerResizeHandler();
         this.registerRouteHandler();
+        this.registerScrollHandler();
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+    /**
+     * The canvas is position:fixed, so scrolling the page moves the document
+     * under it. Phaser's ScaleManager caches the canvas offset and only
+     * recomputes it on resize, so after scrolling all input is offset and the
+     * menu becomes unclickable. Recompute the scale bounds on scroll (debounced
+     * to avoid perpetual refresh churn) so pointer coordinates stay correct.
+     */
+    registerScrollHandler() {
+        this._onScroll = () => {
+            clearTimeout(this._scrollDebounce);
+            this._scrollDebounce = setTimeout(() => this.scale.updateBounds(), 50);
+        };
+        window.addEventListener('scroll', this._onScroll, { passive: true });
+        this.events.once('shutdown', () => {
+            window.removeEventListener('scroll', this._onScroll);
+            clearTimeout(this._scrollDebounce);
+        });
     }
 
     /**
@@ -191,10 +211,20 @@ export class MainMenu extends Scene {
     // ---------------------------------------------------------------------
 
     showInitialClosedBox() {
-        this.logo = this.add.image(120, 30, 'closed')
+        this.logo = this.add.image(110, 30, 'closed')
             .setDepth(100)
             .setScale(0.3)
             .setInteractive({ useHandCursor: true });
+
+        // Generous hit area around the box so it's easy to click/tap to toggle
+        // the menu, including while the page is scrolled.
+        const box = this.textures.get('closed').getSourceImage();
+        this.logo.input.hitArea.setTo(
+            -box.width * 0.25,
+            -box.height * 0.25,
+            box.width * 1.5,
+            box.height * 1.5,
+        );
 
         this.createSlidingDonuts();
         this.setupLogoHoverEffects();
@@ -293,15 +323,16 @@ export class MainMenu extends Scene {
     }
 
     calculateDonutPosition(index) {
-        let gapAdd = 175;
-        if (window.innerWidth < 901 && window.innerWidth > SMALL_SCREEN_MAX_WIDTH) {
-            gapAdd = 140;
-        }
+        // Space the six donuts evenly across the world width so the last one
+        // (Blog) stays fully on screen. Start with a left margin and use a gap
+        // that keeps index 5 within the 1024px world.
+        const startX = 200;
+        const gap = 150;
 
         if (this.isSmallScreen) {
             return { x: 100, y: 150 + index * 155 };
         }
-        return { x: 250 + index * gapAdd + this.donutGap, y: 100 };
+        return { x: startX + index * gap, y: 100 };
     }
 
     setupDonutInteractions(donut, linkName) {

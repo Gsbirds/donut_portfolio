@@ -28,9 +28,11 @@ export const gameConfig = {
     },
     input: {
         // Enable mouse and touch, and allow multi-touch so taps register
-        // reliably on mobile devices.
-        mouse: true,
-        touch: true,
+        // reliably on mobile devices. Don't preventDefault on wheel/touch so
+        // the page underneath the (sticky, overlapping) menu still scrolls
+        // naturally even when the pointer is over the canvas.
+        mouse: { preventDefaultWheel: false },
+        touch: { capture: false },
         activePointers: 3,
     },
     scene: [Boot, Preloader, MainMenu],
