@@ -3,24 +3,14 @@ import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 
-/** In-app content routes. Everything else is treated as the home view. */
 const CONTENT_ROUTES = ['projects', 'about', 'contact'];
-
-/** Breakpoint (px) below which the layout switches to its small-screen form. */
 const SMALL_SCREEN_MAX_WIDTH = 768;
-
-/** Milliseconds the sliding menu stays open after the pointer leaves. */
 const MENU_AUTO_HIDE_DELAY = 1500;
 
-/** Colours for the cursive menu link labels. */
 const LINK_COLOR = '#a94064';
 const LINK_HOVER_COLOR = '#fc5c85';
+const MENU_TEXT_COLOR = '#3e4346';
 
-/**
- * The six menu entries, in display order. `sprite` is the donut texture used
- * for the fly-away animation when the entry is selected; `donut` is the texture
- * used inside the open-box layout.
- */
 const MENU_ITEMS = [
     { label: 'Home', donut: 'first-donut', sprite: 'pink-donut' },
     { label: 'Projects', donut: 'second-donut', sprite: 'blue-donut' },
@@ -30,18 +20,13 @@ const MENU_ITEMS = [
     { label: 'Blog', donut: 'sixth-donut', sprite: 'blue-donut' },
 ];
 
-/** Frames of the box-opening animation (played forwards on entry). */
 const OPEN_SEQUENCE = ['closed', 'mostlyclosed', 'halfway', 'mostlyopen'];
-
-/** Frames of the box-closing animation (played when an entry is selected). */
 const CLOSE_SEQUENCE = [
     { key: 'mostlyopen', scale: 0.75 },
     { key: 'halfway', scale: 0.6 },
     { key: 'mostlyclosed', scale: 0.5 },
     { key: 'closed', scale: 0.3 },
 ];
-
-/** Per-frame delay (ms) for the box open/close animations. */
 const FRAME_DELAY = 55;
 
 export class MainMenu extends Scene {
@@ -61,15 +46,12 @@ export class MainMenu extends Scene {
     create() {
         this.handleHomePage();
 
-        // The landing (home) view shows the animated open box; every other
-        // in-app route shows the compact box menu, matching the deployed site.
         this._view = this.isHomeUrl() ? 'open' : 'closed';
 
         if (this._view === 'closed') {
             this.showInitialClosedBox();
             EventBus.emit('donut-hovered', false);
         } else {
-            // First paint plays the opening animation; rebuilds skip it.
             this.showInitialOpenBox(true);
         }
 
@@ -80,13 +62,8 @@ export class MainMenu extends Scene {
         EventBus.emit('current-scene-ready', this);
     }
 
-    /**
-     * The canvas is position:fixed, so scrolling the page moves the document
-     * under it. Phaser's ScaleManager caches the canvas offset and only
-     * recomputes it on resize, so after scrolling all input is offset and the
-     * menu becomes unclickable. Recompute the scale bounds on scroll (debounced
-     * to avoid perpetual refresh churn) so pointer coordinates stay correct.
-     */
+    // The canvas is position:fixed; Phaser only recomputes its offset on
+    // resize, so scrolling leaves input misaligned until we refresh bounds.
     registerScrollHandler() {
         this._onScroll = () => {
             clearTimeout(this._scrollDebounce);
@@ -99,11 +76,7 @@ export class MainMenu extends Scene {
         });
     }
 
-    /**
-     * Navigation between in-app routes only changes the URL hash (no page
-     * reload), so the scene listens for hashchange and re-renders the view that
-     * matches the new route: the open box on home, the compact menu elsewhere.
-     */
+    // In-app navigation only changes the hash, so re-render on hashchange.
     registerRouteHandler() {
         this._onHashChange = () => {
             const nextView = this.isHomeUrl() ? 'open' : 'closed';
@@ -115,18 +88,13 @@ export class MainMenu extends Scene {
         };
 
         window.addEventListener('hashchange', this._onHashChange);
-
         this.events.once('shutdown', () => {
             window.removeEventListener('hashchange', this._onHashChange);
         });
     }
 
-    /**
-     * Rebuild the menu layout when the viewport crosses the mobile/desktop
-     * breakpoint. FIT scaling already resizes the artwork continuously; this
-     * only re-runs when the *arrangement* needs to change, and is debounced so
-     * dragging the window doesn't thrash.
-     */
+    // Rebuild only when crossing the mobile/desktop breakpoint (FIT already
+    // rescales the artwork itself).
     registerResizeHandler() {
         this._wasSmallScreen = this.isSmallScreen;
 
@@ -141,18 +109,12 @@ export class MainMenu extends Scene {
         };
 
         this.scale.on('resize', this._onResize);
-
         this.events.once('shutdown', () => {
             this.scale.off('resize', this._onResize);
             clearTimeout(this._resizeDebounce);
         });
     }
 
-    /**
-     * Reset the scene to a clean slate and render the active view. Using
-     * Phaser's own teardown primitives guarantees no orphaned sprites, tweens
-     * or timers survive from a previous view (e.g. the fly-away transition).
-     */
     renderCurrentView() {
         clearTimeout(this._hideDonutsTimer);
         this.tweens.killAll();
@@ -167,14 +129,9 @@ export class MainMenu extends Scene {
         if (this._view === 'closed') {
             this.showInitialClosedBox();
         } else {
-            // Skip the opening animation on a rebuild.
             this.buildOpenBox();
         }
     }
-
-    // ---------------------------------------------------------------------
-    // Routing / page helpers
-    // ---------------------------------------------------------------------
 
     handleHomePage() {
         if (this.isHomeUrl()) {
@@ -183,20 +140,10 @@ export class MainMenu extends Scene {
         }
     }
 
-    /**
-     * The landing (home) view is anything that is not one of the content
-     * routes. Defining it by exclusion keeps home as the default: any hash that
-     * isn't projects/about/contact shows the big open menu, never the compact
-     * one. Content routes show the compact menu.
-     */
+    // Home is the default: anything that isn't a content route.
     isHomeUrl() {
-        const hash = window.location.hash;
-        return !CONTENT_ROUTES.some((route) => hash.includes(route));
+        return !CONTENT_ROUTES.some((route) => window.location.hash.includes(route));
     }
-
-    // ---------------------------------------------------------------------
-    // Layout helpers
-    // ---------------------------------------------------------------------
 
     get isSmallScreen() {
         return window.innerWidth <= SMALL_SCREEN_MAX_WIDTH;
@@ -206,9 +153,7 @@ export class MainMenu extends Scene {
         this.input.manager.canvas.style.cursor = style;
     }
 
-    // ---------------------------------------------------------------------
-    // Closed-box view (returning visitor): compact logo + sliding donut menu
-    // ---------------------------------------------------------------------
+    // --- Compact view (content routes): small box + sliding donut row ---
 
     showInitialClosedBox() {
         this.logo = this.add.image(110, 30, 'closed')
@@ -216,8 +161,6 @@ export class MainMenu extends Scene {
             .setScale(0.3)
             .setInteractive({ useHandCursor: true });
 
-        // Generous hit area around the box so it's easy to click/tap to toggle
-        // the menu, including while the page is scrolled.
         const box = this.textures.get('closed').getSourceImage();
         this.logo.input.hitArea.setTo(
             -box.width * 0.25,
@@ -230,16 +173,12 @@ export class MainMenu extends Scene {
         this.setupLogoHoverEffects();
         this.setupLogoMenuInteractions();
 
-        // Show the donut row by default so every non-home page has a visible,
-        // ready-to-use menu. The logo still toggles it open/closed.
         this.showDonuts();
         this._menuStaysOut = true;
     }
 
+    // Cursor feedback only; never swaps the box texture, so hover can't close it.
     setupLogoHoverEffects() {
-        // Cursor feedback only. The box texture is never changed on hover, so
-        // the box can never animate closed just from the pointer passing over
-        // it — it stays as-is until an actual link is selected.
         this.logo.on('pointerover', () => {
             this.setCursorStyle('pointer');
             EventBus.emit('donut-hovered', true);
@@ -266,9 +205,7 @@ export class MainMenu extends Scene {
                 .setAlpha(0)
                 .setName(item.label);
 
-            // A generous circular hit area (in the texture's local space, so it
-            // scales with the donut) keeps the tap target comfortably large on
-            // touch screens even though the donut is drawn small.
+            // Generous hit area keeps the small donut easy to tap.
             const source = this.textures.get(item.sprite).getSourceImage();
             const hitRadius = Math.max(source.width, source.height) * 0.6;
             donut.setInteractive({
@@ -277,12 +214,11 @@ export class MainMenu extends Scene {
                 useHandCursor: true,
             });
 
-            const baseTextColor = '#3e4346';
             const linkText = this.add.text(position.x, position.y + this.textGap, item.label, {
                 fontSize: 40,
                 fontStyle: 'bold',
                 fontFamily: 'Cedarville Cursive',
-                fill: baseTextColor,
+                fill: MENU_TEXT_COLOR,
             })
                 .setOrigin(0.5)
                 .setDepth(102)
@@ -293,12 +229,10 @@ export class MainMenu extends Scene {
                 this.setCursorStyle('pointer');
                 linkText.setStyle({ fill: LINK_HOVER_COLOR });
             });
-
             linkText.on('pointerout', () => {
                 this.setCursorStyle('default');
-                linkText.setStyle({ fill: baseTextColor });
+                linkText.setStyle({ fill: MENU_TEXT_COLOR });
             });
-
             linkText.on('pointerup', () => this.navigateToDestination(item.label));
 
             this.setupDonutInteractions(donut, item.label);
@@ -318,21 +252,11 @@ export class MainMenu extends Scene {
         return window.innerWidth > 1100 ? 95 : 50;
     }
 
-    get donutGap() {
-        return window.innerWidth > 1100 ? 5 : 20;
-    }
-
     calculateDonutPosition(index) {
-        // Space the six donuts evenly across the world width so the last one
-        // (Blog) stays fully on screen. Start with a left margin and use a gap
-        // that keeps index 5 within the 1024px world.
-        const startX = 200;
-        const gap = 150;
-
         if (this.isSmallScreen) {
             return { x: 100, y: 150 + index * 155 };
         }
-        return { x: startX + index * gap, y: 100 };
+        return { x: 200 + index * 150, y: 100 };
     }
 
     setupDonutInteractions(donut, linkName) {
@@ -348,17 +272,15 @@ export class MainMenu extends Scene {
             this.scheduleMenuAutoHide();
         });
 
-        // pointerup fires on tap release for both mouse and touch, so it is the
-        // reliable trigger on mobile (pointerover/out don't apply to touch).
-        const select = () => {
+        // pointerup is the reliable trigger on both mouse and touch.
+        donut.on('pointerup', () => {
             if (linkName === 'Home') {
                 localStorage.removeItem('donutClicked');
                 EventBus.emit('home-menu-clicked', false);
             }
             this.animateDonutRotation(donut, () => this.navigateToDestination(linkName));
-        };
+        });
 
-        donut.on('pointerup', select);
         this.links[linkName] = donut;
     }
 
@@ -416,9 +338,7 @@ export class MainMenu extends Scene {
         });
     }
 
-    // ---------------------------------------------------------------------
-    // Open-box view (first visit): animated box + interactive donut menu
-    // ---------------------------------------------------------------------
+    // --- Open-box view (home): animated box + interactive links ---
 
     showInitialOpenBox(playAnimation = false) {
         if (playAnimation) {
@@ -428,7 +348,6 @@ export class MainMenu extends Scene {
         }
     }
 
-    /** Build the open-box logo, interactive zones and cursive link labels. */
     buildOpenBox() {
         const small = this.isSmallScreen;
         const logoX = small ? 254 : 442;
@@ -440,10 +359,6 @@ export class MainMenu extends Scene {
 
         this.logo = this.add.image(logoX, logoY, 'logo').setDepth(100).setScale(scale);
 
-        // The visible cursive labels are the only clickable elements. We no
-        // longer add invisible hit zones over the box, so hovering or clicking
-        // near the lid can never trigger the close animation — the box stays
-        // open until a link is actually selected.
         this.createLinkRelativeToLogo(-190, 130, 'Home', 'first-donut', scale, Phaser.Math.DegToRad(-19));
         this.createLinkRelativeToLogo(-20, 70, 'Projects', 'second-donut', scale, Phaser.Math.DegToRad(-19));
         this.createLinkRelativeToLogo(130, 20, 'About', 'third-donut', scale, Phaser.Math.DegToRad(-19));
@@ -454,7 +369,6 @@ export class MainMenu extends Scene {
         EventBus.emit('logo-position', { x: this.logo.x, y: this.logo.y });
     }
 
-    /** Play the forward box-opening frames centred in the world, then callback. */
     playOpenSequence(onComplete, index = 0) {
         if (index >= OPEN_SEQUENCE.length) {
             onComplete();
@@ -471,7 +385,6 @@ export class MainMenu extends Scene {
         });
     }
 
-    /** Play the reverse box-closing frames on the current logo, then callback. */
     playCloseSequence(onComplete, index = 0) {
         if (index >= CLOSE_SEQUENCE.length) {
             onComplete();
@@ -496,9 +409,7 @@ export class MainMenu extends Scene {
             { fontSize: `${fontSize}px`, fontFamily: 'Cedarville Cursive', fill: LINK_COLOR },
         ).setOrigin(0.5).setDepth(101).setRotation(rotation);
 
-        // Tight hit area matching the exact text bounds, so only the visible
-        // letters are clickable. The lid (and empty space around the words) is
-        // never interactive, so hovering/pressing the box can't close it.
+        // Tight hit area on the glyphs only, so the box lid isn't clickable.
         linkText.setInteractive(
             new Phaser.Geom.Rectangle(0, 0, linkText.width, linkText.height),
             Phaser.Geom.Rectangle.Contains,
@@ -509,20 +420,17 @@ export class MainMenu extends Scene {
             this.setCursorStyle('pointer');
             linkText.setStyle({ fill: LINK_HOVER_COLOR });
         });
-
         linkText.on('pointerout', () => {
             this.setCursorStyle('default');
             linkText.setStyle({ fill: LINK_COLOR });
             this._pressedLink = null;
         });
 
-        // Only fire on a genuine click: the press AND release must both land on
-        // this same link. This stops the box from closing when the mouse is
-        // just brought down / dragged over the lid.
+        // Require press and release on the same link so a drag over the box
+        // can't trigger a selection.
         linkText.on('pointerdown', () => {
             this._pressedLink = label;
         });
-
         linkText.on('pointerup', () => {
             if (this._pressedLink === label) {
                 this._pressedLink = null;
@@ -534,10 +442,7 @@ export class MainMenu extends Scene {
         this.links[label] = linkText;
     }
 
-    /** Shared handler for selecting an entry from the open-box view. */
     selectOpenBoxItem(name, imageName) {
-        // Selecting Home while already on the home view: just reload the page,
-        // skip the close/fly-away animation.
         if (name === 'Home' && this.isHomeUrl()) {
             window.location.reload();
             return;
@@ -562,7 +467,6 @@ export class MainMenu extends Scene {
         });
     }
 
-    /** Spawn a spinning, bobbing donut that self-destructs after a few seconds. */
     addFlyingDonut(spriteName) {
         const x = this.isSmallScreen ? GAME_WIDTH / 2 - 200 : GAME_WIDTH / 2 + 80;
         const y = GAME_HEIGHT / 2;
@@ -580,15 +484,12 @@ export class MainMenu extends Scene {
             repeat: -1,
             ease: 'Sine.easeInOut',
         });
-
         this.tweens.add({ targets: donut, angle: 360, duration: 1000, repeat: -1 });
 
         this.time.delayedCall(4000, () => donut.destroy());
     }
 
-    // ---------------------------------------------------------------------
-    // Shared helpers
-    // ---------------------------------------------------------------------
+    // --- Shared helpers ---
 
     animateUIElement(target, properties, duration = 500, ease = 'Power2', onComplete = null) {
         const config = { targets: target, ...properties, duration, ease };
@@ -623,7 +524,6 @@ export class MainMenu extends Scene {
     }
 
     navigateToDestination(name) {
-        // External destinations navigate away entirely.
         if (name === 'Blog') {
             EventBus.emit('donut-clicked', true);
             window.location.href = 'https://calm-reef-66202-3443b850ed8c.herokuapp.com/';
@@ -635,8 +535,7 @@ export class MainMenu extends Scene {
             return;
         }
 
-        // Internal destinations use hash routes so they resolve the same way on
-        // localhost and on the deployed GitHub Pages base path.
+        // Hash routes resolve the same on localhost and the GitHub Pages base.
         if (name === 'Home') {
             localStorage.removeItem('donutClicked');
             window.location.hash = '#/';

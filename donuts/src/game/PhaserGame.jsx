@@ -3,14 +3,8 @@ import PropTypes from 'prop-types';
 import StartGame from './main';
 import { EventBus } from './EventBus';
 
-/**
- * Bridge component between React and the Phaser game.
- *
- * It boots the game exactly once into the #game-container element and forwards
- * the active scene to `currentActiveScene`. All application state (donut
- * clicked, menu open, hover) is owned by the parent and driven through the
- * EventBus, so this component intentionally holds no state of its own.
- */
+// Bridge between React and Phaser: boots the game once and forwards the active
+// scene. All shared state lives in the parent and flows through the EventBus.
 export const PhaserGame = forwardRef(function PhaserGame({ currentActiveScene }, ref) {
     const game = useRef();
 
