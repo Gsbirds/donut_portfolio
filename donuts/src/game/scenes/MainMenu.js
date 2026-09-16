@@ -249,7 +249,7 @@ export class MainMenu extends Scene {
 
             const baseTextColor = '#3e4346';
             const linkText = this.add.text(position.x, position.y + this.textGap, item.label, {
-                fontSize: 20,
+                fontSize: 40,
                 fontStyle: 'bold',
                 fontFamily: 'Cedarville Cursive',
                 fill: baseTextColor,
@@ -293,13 +293,13 @@ export class MainMenu extends Scene {
     }
 
     calculateDonutPosition(index) {
-        let gapAdd = 125;
+        let gapAdd = 175;
         if (window.innerWidth < 901 && window.innerWidth > SMALL_SCREEN_MAX_WIDTH) {
-            gapAdd = 98;
+            gapAdd = 140;
         }
 
         if (this.isSmallScreen) {
-            return { x: 100, y: 150 + index * 100 };
+            return { x: 100, y: 150 + index * 155 };
         }
         return { x: 250 + index * gapAdd + this.donutGap, y: 100 };
     }
@@ -362,7 +362,7 @@ export class MainMenu extends Scene {
             this.animateUIElement(donut, { x: position.x, y: position.y, alpha: 1 });
             this.animateUIElement(this.linkTexts[index], {
                 x: position.x,
-                y: position.y + 50,
+                y: position.y + 85,
                 alpha: 1,
             });
         });
