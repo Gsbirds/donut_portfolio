@@ -82,6 +82,12 @@ function selectOpenBoxItem(scene, item) {
         return;
     }
 
+    // Resume and Blog navigate externally — skip the close animation.
+    if (item.label === 'Resume' || item.label === 'Blog') {
+        navigateToDestination(item.label);
+        return;
+    }
+
     scene.cleanUpUIElements();
 
     scene.logo = scene.add.image(612, 495, item.donut).setScale(0.75);
